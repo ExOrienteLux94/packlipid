@@ -1,0 +1,759 @@
+tolerance 2.0
+filetype pdb
+pbc 744.84 744.84 100.00
+add_box_sides 1.0
+output bilayer.pdb
+
+structure POPC-em.pdb
+  number 1205
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 12 12 z 0.0 55.0
+end structure
+
+structure POPC-em.pdb
+  number 550
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure DOPC-em.pdb
+  number 106
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 12 12 z 0.0 55.0
+end structure
+
+structure DOPC-em.pdb
+  number 49
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PIPC-em.pdb
+  number 1772
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 12 12 z 0.0 55.0
+end structure
+
+structure PIPC-em.pdb
+  number 810
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PEPC-em.pdb
+  number 71
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure PEPC-em.pdb
+  number 32
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure PAPC-em.pdb
+  number 283
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure PAPC-em.pdb
+  number 129
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure DAPC-em.pdb
+  number 35
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 14 14 z 0.0 55.0
+end structure
+
+structure DAPC-em.pdb
+  number 16
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure PUPC-em.pdb
+  number 71
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure PUPC-em.pdb
+  number 32
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure POPE-em.pdb
+  number 135
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 12 12 z 0.0 55.0
+end structure
+
+structure POPE-em.pdb
+  number 569
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure DOPE-em.pdb
+  number 44
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 12 12 z 0.0 55.0
+end structure
+
+structure DOPE-em.pdb
+  number 190
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PIPE-em.pdb
+  number 90
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 12 12 z 0.0 55.0
+end structure
+
+structure PIPE-em.pdb
+  number 380
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PQPE-em.pdb
+  number 22
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure PQPE-em.pdb
+  number 95
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure PAPE-em.pdb
+  number 124
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure PAPE-em.pdb
+  number 522
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure DAPE-em.pdb
+  number 78
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 14 14 z 0.0 55.0
+end structure
+
+structure DAPE-em.pdb
+  number 332
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure PUPE-em.pdb
+  number 44
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure PUPE-em.pdb
+  number 190
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure DUPE-em.pdb
+  number 22
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 14 14 z 0.0 55.0
+end structure
+
+structure DUPE-em.pdb
+  number 95
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure DPSM-em.pdb
+  number 611
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 11 11 z 0.0 55.0
+end structure
+
+structure DPSM-em.pdb
+  number 279
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 11 11 z 45.0 100.0
+end structure
+
+structure DBSM-em.pdb
+  number 133
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure DBSM-em.pdb
+  number 61
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure DXSM-em.pdb
+  number 247
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 15 15 z 0.0 55.0
+end structure
+
+structure DXSM-em.pdb
+  number 113
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 15 15 z 45.0 100.0
+end structure
+
+structure POSM-em.pdb
+  number 38
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 11 11 z 0.0 55.0
+end structure
+
+structure POSM-em.pdb
+  number 17
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 11 11 z 45.0 100.0
+end structure
+
+structure PGSM-em.pdb
+  number 38
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 12 12 z 0.0 55.0
+end structure
+
+structure PGSM-em.pdb
+  number 17
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PNSM-em.pdb
+  number 381
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure PNSM-em.pdb
+  number 174
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure BNSM-em.pdb
+  number 191
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+  restrain 14 14 z 0.0 55.0
+end structure
+
+structure BNSM-em.pdb
+  number 86
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure XNSM-em.pdb
+  number 267
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+  restrain 15 15 z 0.0 55.0
+end structure
+
+structure XNSM-em.pdb
+  number 121
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 15 15 z 45.0 100.0
+end structure
+
+structure POPS-em.pdb
+  number 200
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PIPS-em.pdb
+  number 79
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PQPS-em.pdb
+  number 39
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure PAPS-em.pdb
+  number 461
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure DAPS-em.pdb
+  number 20
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure PUPS-em.pdb
+  number 180
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure DUPS-em.pdb
+  number 20
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure DPG1-em.pdb
+  number 89
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 22 22 z 0.0 55.0
+  restrain 26 26 z 0.0 55.0
+end structure
+
+structure DXG1-em.pdb
+  number 51
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 24 24 z 0.0 55.0
+  restrain 30 30 z 0.0 55.0
+end structure
+
+structure PNG1-em.pdb
+  number 64
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 22 22 z 0.0 55.0
+  restrain 28 28 z 0.0 55.0
+end structure
+
+structure XNG1-em.pdb
+  number 51
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 24 24 z 0.0 55.0
+  restrain 30 30 z 0.0 55.0
+end structure
+
+structure DPG3-em.pdb
+  number 89
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 16 16 z 0.0 55.0
+  restrain 20 20 z 0.0 55.0
+end structure
+
+structure DXG3-em.pdb
+  number 51
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 18 18 z 0.0 55.0
+  restrain 24 24 z 0.0 55.0
+end structure
+
+structure PNG3-em.pdb
+  number 64
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 16 16 z 0.0 55.0
+  restrain 22 22 z 0.0 55.0
+end structure
+
+structure XNG3-em.pdb
+  number 51
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 18 18 z 0.0 55.0
+  restrain 24 24 z 0.0 55.0
+end structure
+
+structure POPI-em.pdb
+  number 137
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 10 10 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure PIPI-em.pdb
+  number 120
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 10 10 z 45.0 100.0
+  restrain 14 14 z 45.0 100.0
+end structure
+
+structure PAPI-em.pdb
+  number 120
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 11 11 z 45.0 100.0
+  restrain 15 15 z 45.0 100.0
+end structure
+
+structure PUPI-em.pdb
+  number 51
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 11 11 z 45.0 100.0
+  restrain 15 15 z 45.0 100.0
+end structure
+
+structure POPA-em.pdb
+  number 46
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 11 11 z 45.0 100.0
+end structure
+
+structure PIPA-em.pdb
+  number 39
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 11 11 z 45.0 100.0
+end structure
+
+structure PAPA-em.pdb
+  number 39
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure PUPA-em.pdb
+  number 17
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 8 8 z 45.0 100.0
+  restrain 12 12 z 45.0 100.0
+end structure
+
+structure POP1-em.pdb
+  number 48
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 11 11 z 45.0 100.0
+  restrain 15 15 z 45.0 100.0
+end structure
+
+structure POP2-em.pdb
+  number 48
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 12 12 z 45.0 100.0
+  restrain 16 16 z 45.0 100.0
+end structure
+
+structure POP3-em.pdb
+  number 48
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 13 13 z 45.0 100.0
+  restrain 17 17 z 45.0 100.0
+end structure
+
+structure DPCE-em.pdb
+  number 30
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 5 5 z 0.0 55.0
+  restrain 9 9 z 0.0 55.0
+end structure
+
+structure DPCE-em.pdb
+  number 16
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 5 5 z 45.0 100.0
+  restrain 9 9 z 45.0 100.0
+end structure
+
+structure DXCE-em.pdb
+  number 17
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure DXCE-em.pdb
+  number 9
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure PNCE-em.pdb
+  number 20
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 5 5 z 0.0 55.0
+  restrain 11 11 z 0.0 55.0
+end structure
+
+structure PNCE-em.pdb
+  number 12
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 5 5 z 45.0 100.0
+  restrain 11 11 z 45.0 100.0
+end structure
+
+structure XNCE-em.pdb
+  number 17
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 13 13 z 0.0 55.0
+end structure
+
+structure XNCE-em.pdb
+  number 9
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 13 13 z 45.0 100.0
+end structure
+
+structure PPC-em.pdb
+  number 64
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+end structure
+
+structure OPC-em.pdb
+  number 20
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+end structure
+
+structure IPC-em.pdb
+  number 18
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 8 8 z 0.0 55.0
+end structure
+
+structure APC-em.pdb
+  number 18
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+end structure
+
+structure UPC-em.pdb
+  number 7
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+end structure
+
+structure PODG-em.pdb
+  number 25
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 6 6 z 0.0 55.0
+  restrain 10 10 z 0.0 55.0
+end structure
+
+structure PODG-em.pdb
+  number 17
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 6 6 z 45.0 100.0
+  restrain 10 10 z 45.0 100.0
+end structure
+
+structure PIDG-em.pdb
+  number 23
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 6 6 z 0.0 55.0
+  restrain 10 10 z 0.0 55.0
+end structure
+
+structure PIDG-em.pdb
+  number 15
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 6 6 z 45.0 100.0
+  restrain 10 10 z 45.0 100.0
+end structure
+
+structure PADG-em.pdb
+  number 23
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 11 11 z 0.0 55.0
+end structure
+
+structure PADG-em.pdb
+  number 15
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 11 11 z 45.0 100.0
+end structure
+
+structure PUDG-em.pdb
+  number 9
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 7 7 z 0.0 55.0
+  restrain 11 11 z 0.0 55.0
+end structure
+
+structure PUDG-em.pdb
+  number 6
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 7 7 z 45.0 100.0
+  restrain 11 11 z 45.0 100.0
+end structure
+
+structure CHOL-em.pdb
+  number 3104
+  inside box 0. 0. 50.00 744.84 744.84 100.00
+  restrain 1 1 z 60.0 65.0
+  restrain 9 9 z 0.0 55.0
+end structure
+
+structure CHOL-em.pdb
+  number 2656
+  inside box 0. 0. 0. 744.84 744.84 50.00
+  restrain 1 1 z 35.0 40.0
+  restrain 9 9 z 45.0 100.0
+end structure
+
