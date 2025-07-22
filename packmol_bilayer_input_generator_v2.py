@@ -83,17 +83,18 @@ def distribute_coms(x_max, y_max, n_points, max_iter=10000, delta_s = 0.01):
     Returns:
         numpy.ndarray: Array of shape (n_points, 2) with point coordinates
     """
+
     # Initialize points randomly
     points = np.zeros((n_points, 2))
     points[:, 0] = np.random.uniform(0, x_max, n_points)
     points[:, 1] = np.random.uniform(0, y_max, n_points)
 
-    def pbc_distance(p1, p2):
-        dx = np.abs(p1[0] - p2[0])
-        dy = np.abs(p1[1] - p2[1])
-        dx = min(dx, box_x - dx)
-        dy = min(dy, box_y - dy)
-        return np.sqrt(dx ** 2 + dy ** 2)
+    #def pbc_distance(p1, p2):
+    #    dx = np.abs(p1[0] - p2[0])
+    #    dy = np.abs(p1[1] - p2[1])
+    #    dx = min(dx, x_max - dx)
+    #    dy = min(dy, y_max - dy)
+    #    return np.sqrt(dx ** 2 + dy ** 2)
 
     # Simple repulsive optimization
     for _ in range(max_iter):
@@ -105,18 +106,18 @@ def distribute_coms(x_max, y_max, n_points, max_iter=10000, delta_s = 0.01):
                 dx = points[i][0] - points[j][0]
                 dy = points[i][1] - points[j][1]
                 dx -= x_max * np.round(dx / x_max)
-                dy -= y_max* np.round(dy / y_max)
-                r2 = dx ** 2 + dy ** 2 + 1e-12
+                dy -= y_max * np.round(dy / y_max)
+                r2 = dx ** 2 + dy ** 2 + 1e-12 # error term to avoid point overlap and divission by 0
                 force[0] += dx / r2
                 force[1] += dy / r2
 
             # Small step in repulsive direction
-            points[i][0] += delta_s * force[0]
-            points[i][1] += delta_s * force[1]
+            points[i][0] += 0.01 * force[0]
+            points[i][1] += 0.01 * force[1]
 
             # Apply PBC
-            points[i][0] = x_range[0] + (points[i][0] - x_range[0]) % box_x
-            points[i][1] = y_range[0] + (points[i][1] - y_range[0]) % box_y
+            points[i][0] = points[i][0] % x_max
+            points[i][1] = points[i][1] % y_max
 
     return points
 
@@ -129,8 +130,14 @@ def main():
     protein_pdb = 'AF-P11166-F1-model_v4.pdb'
 
     pbc = True
-    protein = False
-    n_protein = 1
+    protein = False #
+    n_protein = 1 # number of protein copies to include
+
+    solvate = False # solvate system with water beads
+    antifreeze = True # include antifreeze water
+    neutral = True # include neutralizing ions
+
+    run_packmol = False
 
     try:
         # Load composition CSV
