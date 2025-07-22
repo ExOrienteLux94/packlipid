@@ -200,7 +200,7 @@ def main():
             lipid = row['lipid']
             upper = int(row['upper'])
             lower = int(row['lower'])
-            pdb_file = f"{lipid}-em.pdb"
+            pdb_file = f"./pdb/{lipid}-em.pdb"
 
             info = find_tail_atoms(pdb_file)
             first = info['first_atom']
@@ -210,34 +210,46 @@ def main():
 
             # Upper leaflet
             if upper > 0:
+                ul_lim = z_center + 10
                 f.write(f"structure {pdb_file}\n")
                 f.write(f"  number {upper}\n")
                 f.write(f"  inside box 0. 0. {z_center:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
-                f.write(f"  restrain {first} {first} z 60.0 65.0\n") # change limits to not hard coded
-
-                if last_A:
-                    f.write(f"  restrain {last_A} {last_A} z 0.0 55.0\n")
-                if last_B:
-                    f.write(f"  restrain {last_B} {last_B} z 0.0 55.0\n")
-                if not last_A and not last_B:
-                    f.write(f"  restrain {last} {last} z 0.0 55.0\n")
-
+                f.write(f"  atoms {first}\n")
+                f.write(f"    over plane 0. 0. 1. {ul_lim:.2f}\n")
+                f.write("  end atoms\n")
+                
+                if last_A and last_B:
+                    f.write(f"  atoms {last_A} {last_B}\n")
+                elif last_A:
+                    f.write(f"  atoms {last_A}\n")
+                elif last_B:
+                    f.write(f"  atoms {last_B}\n")
+                elif not last_A and not last_B:
+                    f.write(f"  atoms {last}\n")
+                f.write(f"    below plane 0. 0. 1. {ul_lim:.2f}\n")
+                f.write("  end atoms\n")
                 f.write("end structure\n\n")
 
             # Lower leaflet
             if lower > 0:
+                ll_lim = z_center - 10
                 f.write(f"structure {pdb_file}\n")
                 f.write(f"  number {lower}\n")
                 f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {z_center:.2f}\n")
-                f.write(f"  restrain {first} {first} z 35.0 40.0\n")
-
-                if last_A:
-                    f.write(f"  restrain {last_A} {last_A} z 45.0 100.0\n")
-                if last_B:
-                    f.write(f"  restrain {last_B} {last_B} z 45.0 100.0\n")
-                if not last_A and not last_B:
-                    f.write(f"  restrain {last} {last} z 45.0 100.0\n")
-
+                f.write(f"  atoms {first}\n")
+                f.write(f"    below plane 0. 0. 1. {ll_lim:.2f}\n")
+                f.write("  end atoms\n")
+                
+                if last_A and last_B:
+                    f.write(f"  atoms {last_A} {last_B}\n")
+                elif last_A:
+                    f.write(f"  atoms {last_A}\n")
+                elif last_B:
+                    f.write(f"  atoms {last_B}\n")
+                elif not last_A and not last_B:
+                    f.write(f"  atoms {last}\n")
+                f.write(f"    over plane 0. 0. 1. {ll_lim:.2f}\n")
+                f.write("  end atoms\n")
                 f.write("end structure\n\n")
 
     print("PACKMOL input generated with updated box size and bilayer charge calculated.")

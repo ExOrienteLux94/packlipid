@@ -1,0 +1,5 @@
+# ignore .pdbs
+*.pdb
+*.gro
+*.md
+*.inp
