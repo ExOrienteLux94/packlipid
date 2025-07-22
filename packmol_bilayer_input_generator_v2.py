@@ -125,6 +125,11 @@ def main():
 
 
     delim = ';'
+
+    struct_out_type = 'pdb' # type of output file, should add check to see if particle number exceeds 9999 (limit of pdb format)
+    struct_out_pref = 'bilayer' # output file prefix
+    struct_out_file = struct_out_pref + '.' + struct_out_type
+
     packmol_out = 'packmol_input.inp'
     comp_in = 'composition.csv'
     protein_pdb = 'AF-P11166-F1-model_v4.pdb'
@@ -142,6 +147,7 @@ def main():
     run_packmol = False
 
     d_water = 20 # water layer above and below membrane [Å]
+
 
     try:
         # Load composition CSV
@@ -195,13 +201,13 @@ def main():
 
     with open(packmol_out, 'w') as f:
         f.write("tolerance 3.0\n")
-        f.write("filetype pdb\n")
+        f.write(f"filetype {struct_out_type}\n")
 
         if pbc:
             f.write(f"pbc {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
             f.write("add_box_sides 1.0\n")
 
-        f.write("output bilayer.pdb\n\n")
+        f.write(f"output {struct_out_file}\n\n")
 
         if protein:
             for i in range(n_protein):
