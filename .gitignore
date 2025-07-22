@@ -1,5 +1,5 @@
 # ignore .pdbs
-*.pdb
-*.gro
+./*.pdb
+./*.gro
 *.md
 *.inp

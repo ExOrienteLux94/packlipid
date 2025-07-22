@@ -1,0 +1,5 @@
+TITLE     SOL sim
+MODEL        1
+ATOM      1  C1  POPI    1       0.000   0.000   0.000  1.00  0.00            
+TER
+ENDMDL

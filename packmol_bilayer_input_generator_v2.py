@@ -128,16 +128,20 @@ def main():
     packmol_out = 'packmol_input.inp'
     comp_in = 'composition.csv'
     protein_pdb = 'AF-P11166-F1-model_v4.pdb'
+    water_pdb = './pdb/SOL.pdb'
 
     pbc = True
     protein = False #
     n_protein = 1 # number of protein copies to include
 
-    solvate = False # solvate system with water beads
-    antifreeze = True # include antifreeze water
+    solvate = True # solvate system with water beads
     neutral = True # include neutralizing ions
 
+    write_topol = True
+
     run_packmol = False
+
+    d_water = 20 # water layer above and below membrane [Å]
 
     try:
         # Load composition CSV
@@ -176,9 +180,6 @@ def main():
         print("One or more of the provided files does not exists or unable to read file contents!")
         quit
 
-    # Fixed box Z (change to user query)
-    z = 100
-    z_center = z / 2
 
     if protein:
         coords = find_extreme_coords(protein_pdb)
@@ -186,9 +187,14 @@ def main():
             points = np.array([[xy_length/2, xy_length/2]])
         else:
             points = distribute_coms(xy_length, n_protein)
+    else:
+        # Fixed box Z (change to user query)
+        z = d_water * 2 + 21
+        z_center = z / 2
+    
 
     with open(packmol_out, 'w') as f:
-        f.write("tolerance 2.0\n")
+        f.write("tolerance 3.0\n")
         f.write("filetype pdb\n")
 
         if pbc:
@@ -258,6 +264,21 @@ def main():
                 f.write(f"    over plane 0. 0. 1. {ll_lim:.2f}\n")
                 f.write("  end atoms\n")
                 f.write("end structure\n\n")
+
+        if solvate:
+            # assume water density at 1atm, 290 K (55.5 mol/l) and 4 water per MARTINI bead
+            rho_w = 8.36  # beads per nm³
+            n_water = round((d_water * xy_length * xy_length) * (rho_w / 1000))
+            print(f"Solvated system with {2*n_water} water particles.")
+            f.write(f"structure {water_pdb}\n")
+            f.write(f"  number {n_water}\n")
+            f.write(f"  inside box 0. 0. {ul_lim:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
+            f.write("end structure\n\n")
+
+            f.write(f"structure {water_pdb}\n")
+            f.write(f"  number {n_water}\n")
+            f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {ll_lim:.2f}\n")
+            f.write("end structure\n\n")
 
     print("PACKMOL input generated with updated box size and bilayer charge calculated.")
 
