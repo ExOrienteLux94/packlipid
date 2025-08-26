@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
-
+import matplotlib.pyplot as plt
+import sys
+import argparse
 
 def find_tail_atoms(pdb_path):
     tail_A = []
@@ -27,119 +29,246 @@ def find_tail_atoms(pdb_path):
     }
 
 
-def find_extreme_coords(pdb_path, n=1):
-    """
-    Parses a PDB file and returns a numpy array with the averages of the n maximum and minimum X, Y, Z coordinates.
 
-    Shape: (3, 2) -> [[x_min, x_max], [y_min, y_max], [z_min, z_max]]
+def find_extreme_coords(pdb_file):
     """
-    x_coords, y_coords, z_coords = [], [], []
+    Find the minimum and maximum x, y, z coordinates in a PDB file and the atom indices where they occur.
 
-    with open(pdb_path, 'r') as f:
-        for line in f:
-            if line.startswith(('ATOM', 'HETATM')) and len(line) >= 54:
+    Returns:
+        extremes (np.ndarray): 3x2 array of min and max for x, y, z
+        indices (dict): indices of atoms with min/max x, y, z
+    """
+    coords = []
+    atom_indices = []
+
+    with open(pdb_file, 'r') as file:
+        for i, line in enumerate(file):
+            if line.startswith("ATOM") or line.startswith("HETATM"):
                 try:
                     x = float(line[30:38])
                     y = float(line[38:46])
                     z = float(line[46:54])
-                    x_coords.append(x)
-                    y_coords.append(y)
-                    z_coords.append(z)
+                    ndx = int(line[6:11])
+                    coords.append([x, y, z])
+                    atom_indices.append(ndx)
                 except ValueError:
-                    continue  # Skip malformed lines
+                    continue
 
-    if not x_coords or not y_coords or not z_coords:
-        raise ValueError("No valid ATOM/HETATM coordinates found in file.")
+    coords = np.array(coords)
+    if coords.size == 0:
+        raise ValueError("No atom coordinates found in the PDB file.")
 
-    x_max_avg = np.mean(sorted(x_coords, reverse=True)[:n])
-    x_min_avg = np.mean(sorted(x_coords)[:n])
+    extremes = np.zeros((3, 2))
+    indices = {'x_min': None, 'x_max': None, 'y_min': None, 'y_max': None, 'z_min': None, 'z_max': None}
 
-    y_max_avg = np.mean(sorted(y_coords, reverse=True)[:n])
-    y_min_avg = np.mean(sorted(y_coords)[:n])
+    for i, axis in enumerate(['x', 'y', 'z']):
+        min_val = np.min(coords[:, i])
+        max_val = np.max(coords[:, i])
+        extremes[i, 0] = min_val
+        extremes[i, 1] = max_val
 
-    z_max_avg = np.mean(sorted(z_coords, reverse=True)[:n])
-    z_min_avg = np.mean(sorted(z_coords)[:n])
+        indices[f'{axis}_min'] = atom_indices[np.argmin(coords[:, i])]
+        indices[f'{axis}_max'] = atom_indices[np.argmax(coords[:, i])]
 
-    coords = np.array([
-        [x_min_avg, x_max_avg],
-        [y_min_avg, y_max_avg],
-        [z_min_avg, z_max_avg]
-    ])
+    return extremes, indices
 
-    return coords
-
-def distribute_coms(x_max, y_max, n_points, max_iter=10000, delta_s = 0.01):
+def distribute_coms(x_range, y_range, n_points, max_iter=10000, delta_s = 1):
     """
     Distribute n points in a 2D box with periodic boundary conditions
-    to maximize the minimum point-to-point distance.
+    to maximize the minimum point-to-point distance using gradient-based optimization.
 
     Args:
-        x_range (float): maximum x coordinate
-        y_range (float): maximum y coordinate
+        x_range (np.ndarray): (xmin, xmax)
+        y_range (np.ndarray): (ymin, ymax)
         n_points (int): number of points
         max_iter (int): number of optimization steps
-        delta_s (float): iteration step size (dx and dy)
+        lr (float): learning rate for optimization
 
     Returns:
         numpy.ndarray: Array of shape (n_points, 2) with point coordinates
     """
-
+    # Initialize points randomly
     # Initialize points randomly
     points = np.zeros((n_points, 2))
-    points[:, 0] = np.random.uniform(0, x_max, n_points)
-    points[:, 1] = np.random.uniform(0, y_max, n_points)
+    points[:, 0] = np.random.uniform(x_range[0], x_range[1], n_points)
+    points[:, 1] = np.random.uniform(y_range[0], y_range[1], n_points)
 
-    #def pbc_distance(p1, p2):
-    #    dx = np.abs(p1[0] - p2[0])
-    #    dy = np.abs(p1[1] - p2[1])
-    #    dx = min(dx, x_max - dx)
-    #    dy = min(dy, y_max - dy)
-    #    return np.sqrt(dx ** 2 + dy ** 2)
+    box_x = x_range[1] - x_range[0]
+    box_y = y_range[1] - y_range[0]
 
-    # Simple repulsive optimization
+    def pbc_vector(p1, p2):
+        dx = p1[0] - p2[0]
+        dy = p1[1] - p2[1]
+        dx -= box_x * np.round(dx / box_x)
+        dy -= box_y * np.round(dy / box_y)
+        return np.array([dx, dy])
+
+    # Gradient-based repulsion optimization
     for _ in range(max_iter):
+        gradients = np.zeros_like(points)
         for i in range(n_points):
-            force = np.zeros(2)
             for j in range(n_points):
                 if i == j:
                     continue
-                dx = points[i][0] - points[j][0]
-                dy = points[i][1] - points[j][1]
-                dx -= x_max * np.round(dx / x_max)
-                dy -= y_max * np.round(dy / y_max)
-                r2 = dx ** 2 + dy ** 2 + 1e-12 # error term to avoid point overlap and divission by 0
-                force[0] += dx / r2
-                force[1] += dy / r2
+                delta = pbc_vector(points[i], points[j])
+                dist_sq = np.sum(delta ** 2) + 1e-12
+                gradients[i] += delta / dist_sq
 
-            # Small step in repulsive direction
-            points[i][0] += 0.01 * force[0]
-            points[i][1] += 0.01 * force[1]
+        # Gradient descent step
+        points += delta_s * gradients
 
-            # Apply PBC
-            points[i][0] = points[i][0] % x_max
-            points[i][1] = points[i][1] % y_max
+        # Apply PBC
+        points[:, 0] = x_range[0] + (points[:, 0] - x_range[0]) % box_x
+        points[:, 1] = y_range[0] + (points[:, 1] - y_range[0]) % box_y
 
     return points
+
+def grid_points_pbc(x_range, y_range, n_points):
+    """
+    Place n points in a 2D periodic box with maximum equal spacing using a regular grid.
+
+    Args:
+        x_range (tuple): (xmin, xmax)
+        y_range (tuple): (ymin, ymax)
+        n_points (int): Number of points
+
+    Returns:
+        np.ndarray: (n_points, 2) array of point coordinates
+    """
+    box_x = x_range[1] - x_range[0]
+    box_y = y_range[1] - y_range[0]
+
+    # Estimate grid size (rows x cols) as close to square as possible
+    n_cols = int(np.ceil(np.sqrt(n_points)))
+    n_rows = int(np.ceil(n_points / n_cols))
+
+    # Adjust spacing based on grid dimensions
+    spacing_x = box_x / n_cols
+    spacing_y = box_y / n_rows
+
+    # Generate points
+    points = []
+    for i in range(n_rows):
+        for j in range(n_cols):
+            if len(points) >= n_points:
+                break
+            x = x_range[0] + (j + 0.5) * spacing_x
+            y = y_range[0] + (i + 0.5) * spacing_y
+            points.append((x, y))
+
+    return np.array(points)
+
+def regular_polygon_pbc(x_range, y_range, n_points):
+    """
+    Place n points in a regular polygon arrangement inside a periodic box.
+    Maximizes point-to-point distances while avoiding PBC overlap.
+
+    Args:
+        x_range (tuple): (xmin, xmax)
+        y_range (tuple): (ymin, ymax)
+        n_points (int): number of points (>=3 recommended)
+
+    Returns:
+        np.ndarray: (n_points, 2) array of coordinates
+    """
+    box_x = x_range[1] - x_range[0]
+    box_y = y_range[1] - y_range[0]
+
+    # Center of box
+    center_x = (x_range[0] + x_range[1]) / 2
+    center_y = (y_range[0] + y_range[1]) / 2
+
+    # Maximum safe radius without overlapping across PBCs
+    max_radius = min(box_x, box_y) / 3
+
+    # Angle between points
+    angles = np.linspace(0, 2 * np.pi, n_points, endpoint=False)
+
+    # Coordinates of points
+    x_coords = center_x + max_radius * np.cos(angles)
+    y_coords = center_y + max_radius * np.sin(angles)
+
+    points = np.stack([x_coords, y_coords], axis=1)
+
+    return points
+
+
+
+def evaluate_distribution(points, x_range, y_range):
+    """
+    Evaluates and plots the distribution of points.
+    """
+    n_points = len(points)
+    box_x = x_range[1] - x_range[0]
+    box_y = y_range[1] - y_range[0]
+
+    dists = []
+    for i in range(n_points):
+        for j in range(i + 1, n_points):
+            dx = points[i][0] - points[j][0]
+            dy = points[i][1] - points[j][1]
+            dx -= box_x * np.round(dx / box_x)
+            dy -= box_y * np.round(dy / box_y)
+            dist = np.sqrt(dx ** 2 + dy ** 2)
+            dists.append(dist)
+
+    min_dist = np.min(dists)
+    avg_dist = np.mean(dists)
+
+    print(f"Minimum distance between protein COMs: {min_dist:.3f}")
+    print(f"Average distance between protein COMs: {avg_dist:.3f}")
+
+    plt.figure(figsize=(6, 6))
+    plt.scatter(points[:, 0], points[:, 1], s=30, color='blue')
+    plt.xlim(x_range)
+    plt.ylim(y_range)
+    plt.gca().set_aspect('equal')
+    plt.title("Point Distribution with PBC (Gradient Optimized)")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.grid(True)
+    plt.show()
 
 def main():
 
 
-    delim = ';'
+    parser = argparse.ArgumentParser(prog='Packlipid.py', description='Python program for wirting packmol input scripts for complex lipid bilayr compostions/n with possibility to include imbedded proteins.\n Written by Maisa Vuorte\n')
+    parser.add_argument("-out", "--out", type=str, default='packmol_input.inp', help='name of packmol output file (default: %(default)s)')
+    parser.add_argument("-comp", "--comp", type=str, required=True, help='name of lipid composition .csv file (default: %(default)s)')
+    parser.add_argument("-prot", "--prot",type=str, default = 'AF-P11166-F1-model_v4.pdb', help='name of protein struture file (default: %(default)s)')
+    parser.add_argument("-sol", "--sol", type=str, default='./pdb/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
+    parser.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structurefile to read gro or pdb (default: %(default)s)')
+    parser.add_argument("-pref", "--pref", type=str, default='out', help='prefix of outut strcture file (default: %(default)s)')
+    parser.add_argument("-delim", "--delim", type =str, default=';', help='delimiter used in .csv file (default: %(default)s)')
 
-    struct_out_type = 'pdb' # type of output file, should add check to see if particle number exceeds 9999 (limit of pdb format)
-    struct_out_pref = 'bilayer' # output file prefix
+    parser.add_argument("-solvate", "--solvate", type=bool, default=False, help='solvate created strcutre with solvent True/False (default: %(default)s)')
+
+    # protein insert arguments
+    parser.add_argument("-proteins", "--proteins", type=bool, default=False, help='inbed protein structures in bilayer True/False (default: %(default)s)')
+    parser.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
+    parser.add_argument("-method", "--method", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protien structures in bilayer, choises: %(choices)s (default: %(default)s)')
+
+    args = parser.parse_args()
+
+    delim = args.delim
+
+    struct_out_type = args.struct # type of output file, should add check to see if particle number exceeds 9999 (limit of pdb format)
+    struct_out_pref = args.pref # output file prefix
     struct_out_file = struct_out_pref + '.' + struct_out_type
 
-    packmol_out = 'packmol_input.inp'
-    comp_in = 'composition.csv'
-    protein_pdb = 'AF-P11166-F1-model_v4.pdb'
-    water_pdb = './pdb/SOL.pdb'
+    packmol_out = args.out
+    comp_in = args.comp
+    protein_pdb = args.prot
+    #protein_pdb = 'AF-P11166-F1-model_v4.pdb'
+    water_pdb = args.sol
 
     pbc = True
-    protein = False #
-    n_protein = 1 # number of protein copies to include
+    protein = args.proteins # embed protein to bilayer
+    n_protein = args.nprotein # number of protein copies to include
+    protein_distr_mode = args.method # distribution mode 'random', 'grid', or 'polygon'
+    plot_protein_dstr = True # plot protein COMs
 
-    solvate = True # solvate system with water beads
+    solvate = args.solvate # solvate system with water beads
     neutral = True # include neutralizing ions
 
     write_topol = True
@@ -186,106 +315,138 @@ def main():
         print("One or more of the provided files does not exists or unable to read file contents!")
         quit
 
+    try:
+        if protein:
+            prot_coords, prot_ndxs = find_extreme_coords(protein_pdb)
+            diff_xy = np.abs(prot_coords[0:-1,1] - prot_coords[0:-1,0])
+            r_cylider = np.max(diff_xy) * 0.525
+            h_cylider = np.abs(prot_coords[-1,1] - prot_coords[1,0]) * 1.05
+            prot_area = diff_xy[0] * diff_xy[1] * np.pi * n_protein
+            xy_length = (avg_leaflet_area + prot_area) ** 0.5
+            print(f"After adding {n_protein} proteins, Box XY dimensions are: {xy_length:.2f} x {xy_length:.2f} Å")
 
-    if protein:
-        coords = find_extreme_coords(protein_pdb)
-        if n_protein == 1:
-            points = np.array([[xy_length/2, xy_length/2]])
-        else:
-            points = distribute_coms(xy_length, n_protein)
-    else:
+            if n_protein == 1:
+                prot_coms = np.array([[xy_length/2, xy_length/2]])
+            else:
+                if protein_distr_mode == 'random':
+                    prot_coms = distribute_coms(np.array([0, xy_length]), np.array([0, xy_length]), n_protein)
+                elif protein_distr_mode == 'grid':
+                    prot_coms = grid_points_pbc(np.array([0, xy_length]), np.array([0, xy_length]), n_protein)
+                elif protein_distr_mode == 'polygon':
+                    prot_coms = regular_polygon_pbc(np.array([0, xy_length]), np.array([0, xy_length]), n_protein)
+                else:
+                    print("No valid protein distribution scheme provided as input!")
+                    sys.exit()
+
+                if plot_protein_dstr:
+                    evaluate_distribution(prot_coms, np.array([0, xy_length]), np.array([0, xy_length]))
+        
         # Fixed box Z (change to user query)
         z = d_water * 2 + 21
         z_center = z / 2
-    
+        
 
-    with open(packmol_out, 'w') as f:
-        f.write("tolerance 3.0\n")
-        f.write(f"filetype {struct_out_type}\n")
+        with open(packmol_out, 'w') as f:
+            f.write("tolerance 3.0\n")
+            f.write(f"filetype {struct_out_type}\n")
 
-        if pbc:
-            f.write(f"pbc {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
-            f.write("add_box_sides 1.0\n")
+            if pbc:
+                f.write(f"pbc {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
+                f.write("add_box_sides 1.0\n")
 
-        f.write(f"output {struct_out_file}\n\n")
+            f.write(f"output {struct_out_file}\n\n")
 
-        if protein:
-            for i in range(n_protein):
-                f.write(f"structure {protein_pdb}\n")
-                f.write(f"  number 1\n")
+            if protein:
+                for i in range(n_protein):
+                    z_cylinder_start = z_center - h_cylider / 2
+                    z_cylinder_end = z_center + h_cylider / 2
+                    z_max = prot_ndxs["z_max"]
+                    z_min = prot_ndxs["z_min"]
+                    f.write(f"structure {protein_pdb}\n")
+                    f.write(f"  number 1\n")
+                    f.write(f"  inside cylinder {prot_coms[i,0]:.2f} {prot_coms[i,1]:.2f} {z_cylinder_start:.2f} 0. 0. 1. {r_cylider:.2f} {h_cylider:.2f}\n")
+                    f.write(f"  atoms {z_max:d}\n")
+                    f.write(f"    over plane 0. 0. 1. {z_center+0.5:.2f}\n")
+                    f.write("  end atoms\n")
+                    f.write(f"  atoms {z_min:d}\n")
+                    f.write(f"    below plane 0. 0. 1. {z_center-0.5:.2f}\n")
+                    f.write("  end atoms\n")
+                    f.write("end structure\n\n")
 
 
-        for idx, row in merged.iterrows():
-            lipid = row['lipid']
-            upper = int(row['upper'])
-            lower = int(row['lower'])
-            pdb_file = f"./pdb/{lipid}-em.pdb"
+            for idx, row in merged.iterrows():
+                lipid = row['lipid']
+                upper = int(row['upper'])
+                lower = int(row['lower'])
+                pdb_file = f"./pdb/{lipid}-em.pdb"
 
-            info = find_tail_atoms(pdb_file)
-            first = info['first_atom']
-            last_A = info['last_A']
-            last_B = info['last_B']
-            last = info['last_atom']
+                info = find_tail_atoms(pdb_file)
+                first = info['first_atom']
+                last_A = info['last_A']
+                last_B = info['last_B']
+                last = info['last_atom']
 
-            # Upper leaflet
-            if upper > 0:
-                ul_lim = z_center + 10
-                f.write(f"structure {pdb_file}\n")
-                f.write(f"  number {upper}\n")
-                f.write(f"  inside box 0. 0. {z_center:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
-                f.write(f"  atoms {first}\n")
-                f.write(f"    over plane 0. 0. 1. {ul_lim:.2f}\n")
-                f.write("  end atoms\n")
-                
-                if last_A and last_B:
-                    f.write(f"  atoms {last_A} {last_B}\n")
-                elif last_A:
-                    f.write(f"  atoms {last_A}\n")
-                elif last_B:
-                    f.write(f"  atoms {last_B}\n")
-                elif not last_A and not last_B:
-                    f.write(f"  atoms {last}\n")
-                f.write(f"    below plane 0. 0. 1. {ul_lim:.2f}\n")
-                f.write("  end atoms\n")
+                # Upper leaflet
+                if upper > 0:
+                    ul_lim = z_center + 10
+                    f.write(f"structure {pdb_file}\n")
+                    f.write(f"  number {upper}\n")
+                    f.write(f"  inside box 0. 0. {z_center:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
+                    f.write(f"  atoms {first}\n")
+                    f.write(f"    over plane 0. 0. 1. {ul_lim:.2f}\n")
+                    f.write("  end atoms\n")
+                    
+                    if last_A and last_B:
+                        f.write(f"  atoms {last_A} {last_B}\n")
+                    elif last_A:
+                        f.write(f"  atoms {last_A}\n")
+                    elif last_B:
+                        f.write(f"  atoms {last_B}\n")
+                    elif not last_A and not last_B:
+                        f.write(f"  atoms {last}\n")
+                    f.write(f"    below plane 0. 0. 1. {ul_lim:.2f}\n")
+                    f.write("  end atoms\n")
+                    f.write("end structure\n\n")
+
+                # Lower leaflet
+                if lower > 0:
+                    ll_lim = z_center - 10
+                    f.write(f"structure {pdb_file}\n")
+                    f.write(f"  number {lower}\n")
+                    f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {z_center:.2f}\n")
+                    f.write(f"  atoms {first}\n")
+                    f.write(f"    below plane 0. 0. 1. {ll_lim:.2f}\n")
+                    f.write("  end atoms\n")
+                    
+                    if last_A and last_B:
+                        f.write(f"  atoms {last_A} {last_B}\n")
+                    elif last_A:
+                        f.write(f"  atoms {last_A}\n")
+                    elif last_B:
+                        f.write(f"  atoms {last_B}\n")
+                    elif not last_A and not last_B:
+                        f.write(f"  atoms {last}\n")
+                    f.write(f"    over plane 0. 0. 1. {ll_lim:.2f}\n")
+                    f.write("  end atoms\n")
+                    f.write("end structure\n\n")
+
+            if solvate:
+                # assume water density at 1atm, 290 K (55.5 mol/l) and 4 water per MARTINI bead
+                rho_w = 8.36  # beads per nm³
+                n_water = round((d_water * xy_length * xy_length) * (rho_w / 1000))
+                print(f"Solvated system with {2*n_water} water particles.")
+                f.write(f"structure {water_pdb}\n")
+                f.write(f"  number {n_water}\n")
+                f.write(f"  inside box 0. 0. {ul_lim:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
                 f.write("end structure\n\n")
 
-            # Lower leaflet
-            if lower > 0:
-                ll_lim = z_center - 10
-                f.write(f"structure {pdb_file}\n")
-                f.write(f"  number {lower}\n")
-                f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {z_center:.2f}\n")
-                f.write(f"  atoms {first}\n")
-                f.write(f"    below plane 0. 0. 1. {ll_lim:.2f}\n")
-                f.write("  end atoms\n")
-                
-                if last_A and last_B:
-                    f.write(f"  atoms {last_A} {last_B}\n")
-                elif last_A:
-                    f.write(f"  atoms {last_A}\n")
-                elif last_B:
-                    f.write(f"  atoms {last_B}\n")
-                elif not last_A and not last_B:
-                    f.write(f"  atoms {last}\n")
-                f.write(f"    over plane 0. 0. 1. {ll_lim:.2f}\n")
-                f.write("  end atoms\n")
+                f.write(f"structure {water_pdb}\n")
+                f.write(f"  number {n_water}\n")
+                f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {ll_lim:.2f}\n")
                 f.write("end structure\n\n")
 
-        if solvate:
-            # assume water density at 1atm, 290 K (55.5 mol/l) and 4 water per MARTINI bead
-            rho_w = 8.36  # beads per nm³
-            n_water = round((d_water * xy_length * xy_length) * (rho_w / 1000))
-            print(f"Solvated system with {2*n_water} water particles.")
-            f.write(f"structure {water_pdb}\n")
-            f.write(f"  number {n_water}\n")
-            f.write(f"  inside box 0. 0. {ul_lim:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
-            f.write("end structure\n\n")
-
-            f.write(f"structure {water_pdb}\n")
-            f.write(f"  number {n_water}\n")
-            f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {ll_lim:.2f}\n")
-            f.write("end structure\n\n")
-
-    print("PACKMOL input generated with updated box size and bilayer charge calculated.")
+        print("PACKMOL input generated with updated box size and bilayer charge calculated.")
+    except SystemExit:
+        print("Program execution terminated!")
 
 main()
