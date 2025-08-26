@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import argparse
+from datetime import datetime
+import os
+import shutil
 
 def find_tail_atoms(pdb_path):
     tail_A = []
@@ -232,23 +235,33 @@ def evaluate_distribution(points, x_range, y_range):
 def main():
 
 
-    parser = argparse.ArgumentParser(prog='Packlipid.py', description='Python program for wirting packmol input scripts for complex lipid bilayr compostions/n with possibility to include imbedded proteins.\n Written by Maisa Vuorte\n')
-    parser.add_argument("-out", "--out", type=str, default='packmol_input.inp', help='name of packmol output file (default: %(default)s)')
-    parser.add_argument("-comp", "--comp", type=str, required=True, help='name of lipid composition .csv file (default: %(default)s)')
-    parser.add_argument("-prot", "--prot",type=str, default = 'AF-P11166-F1-model_v4.pdb', help='name of protein struture file (default: %(default)s)')
-    parser.add_argument("-sol", "--sol", type=str, default='./pdb/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
-    parser.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structurefile to read gro or pdb (default: %(default)s)')
-    parser.add_argument("-pref", "--pref", type=str, default='out', help='prefix of outut strcture file (default: %(default)s)')
-    parser.add_argument("-delim", "--delim", type =str, default=';', help='delimiter used in .csv file (default: %(default)s)')
+    parser = argparse.ArgumentParser(prog='Packlipid.py', description='Python program for writing packmol input scripts for complex lipid bilayer compostions with possibility to include imbedded proteins. Written by Maisa Vuorte\n')
+    arg_group_general = parser.add_argument_group('General')
+    arg_group_utility = parser.add_argument_group('Utility')
+    arg_group_protein = parser.add_argument_group('Protein')
+    
+    arg_group_general.add_argument("-out", "--out", type=str, default='packmol_input.inp', help='name of packmol output file (default: %(default)s)')
+    arg_group_general.add_argument("-comp", "--comp", type=str, required=True, help='name of lipid composition .csv file (default: %(default)s)')
+    arg_group_protein.add_argument("-prot", "--prot",type=str, default = 'AF-P11166-F1-model_v4.pdb', help='name of protein struture file (default: %(default)s)')
+    arg_group_general.add_argument("-sol", "--sol", type=str, default='./pdb/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
+    arg_group_general.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structure file to read gro or pdb (default: %(default)s)')
+    arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of outut strcture file (default: %(default)s)')
+    arg_group_general.add_argument("-delim", "--delim", type =str, default=';', help='delimiter used in .csv file (default: %(default)s)')
 
-    parser.add_argument("-solvate", "--solvate", type=bool, default=False, help='solvate created strcutre with solvent True/False (default: %(default)s)')
+
+    # solvation and utility arguments
+    arg_group_utility.add_argument("-solvate", "--solvate", type=bool, default=False, help='solvate created strcutre with solvent True/False (default: %(default)s)')
+    arg_group_utility.add_argument("-dsol", "--dsol", type=float, default=20, help='height of water layer above and below the bilayer [Å] (default: %(default)s)')
+    arg_group_utility.add_argument("-neutral", "--neutral", type=bool, default=False, help='add ions (Na+/Cl-) to neutralize system net charge to 0 True/False (default: %(default)s)')
 
     # protein insert arguments
-    parser.add_argument("-proteins", "--proteins", type=bool, default=False, help='inbed protein structures in bilayer True/False (default: %(default)s)')
-    parser.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
-    parser.add_argument("-method", "--method", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protien structures in bilayer, choises: %(choices)s (default: %(default)s)')
+    arg_group_protein.add_argument("-proteins", "--proteins", type=bool, default=False, help='inbed protein structures in bilayer True/False (default: %(default)s)')
+    arg_group_protein.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
+    arg_group_protein.add_argument("-method", "--method", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protien structures in bilayer, choises: %(choices)s (default: %(default)s)')
 
     args = parser.parse_args()
+
+    cwd = os.getcwd()
 
     delim = args.delim
 
@@ -269,20 +282,46 @@ def main():
     plot_protein_dstr = True # plot protein COMs
 
     solvate = args.solvate # solvate system with water beads
-    neutral = True # include neutralizing ions
+    neutral = args.neutral # include neutralizing ions
 
     write_topol = True
 
     run_packmol = False
 
-    d_water = 20 # water layer above and below membrane [Å]
+    d_water = args.dsol # water layer above and below membrane [Å]
 
 
     try:
+        # Create output directory
+        timestamp = datetime.now().strftime("%M-%H-%d-%Y")
+        timestamp = datetime.now().strftime("%M-%H-%d-%Y")
+        base_dirname = f"run_{timestamp}"
+        dirname = base_dirname
+
+        i = 1
+        while os.path.exists(dirname):
+            dirname = f"{base_dirname}_{i}"
+            i += 1
+
+        os.makedirs(dirname)
+        print(f"Created output directory: {os.path.join(cwd, dirname)}")
+
+        # copy input files to output directory
+        files_to_copy = [comp_in, protein_pdb]
+
+        for src_file in files_to_copy:
+            if os.path.exists(src_file):
+                dst_file = os.path.join(dirname, os.path.basename(src_file))
+                shutil.copy(src_file, dst_file)
+                print(f"Copied {src_file} to {dst_file}")
+            else:
+                print(f"File not found: {src_file}")
+        os.chdir(os.path.join(cwd, dirname))
+        cwd = os.getcwd()
+
         # Load composition CSV
         composition = pd.read_csv(comp_in, delimiter=delim, header=None)
         composition.columns = ['lipid', 'upper', 'lower']
-
         # Load areas CSV
         areas = pd.read_csv('areas.csv', delimiter=delim)
 
