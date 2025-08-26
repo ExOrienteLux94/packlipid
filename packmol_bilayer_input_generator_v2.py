@@ -250,18 +250,27 @@ def main():
 
 
     # solvation and utility arguments
-    arg_group_utility.add_argument("-solvate", "--solvate", type=bool, default=False, help='solvate created strcutre with solvent True/False (default: %(default)s)')
+    arg_group_utility.add_argument("-lipids", "--lipids", nargs='*', type = str, default=None, help='Name(s) of lipids constituting the membrane when not reading composition from .csv, order must match --nupper and --nlower (default: %(default)s)')
+    arg_group_utility.add_argument("-nupper", "--nupper", nargs='*', type = int, default=None, help='Number of lipids constituting the membrane when not reading composition from .csv, order must match --lipids (default: %(default)s)')
+    arg_group_utility.add_argument("-nlower", "--nlower", nargs='*', type = int, default=None, help='Number of lipids constituting the membrane when not reading composition from .csv, order must match --lipids (default: %(default)s)')
+    arg_group_utility.add_argument("-solvate", "--solvate", type=str, default=False, help='solvate created strcutre with solvent True/False (default: %(default)s)')
     arg_group_utility.add_argument("-dsol", "--dsol", type=float, default=20, help='height of water layer above and below the bilayer [Å] (default: %(default)s)')
-    arg_group_utility.add_argument("-neutral", "--neutral", type=bool, default=False, help='add ions (Na+/Cl-) to neutralize system net charge to 0 True/False (default: %(default)s)')
+    arg_group_utility.add_argument("-neutral", "--neutral", type=str, default=False, help='add ions (Na+/Cl-) to neutralize system net charge to 0 True/False (default: %(default)s)')
 
     # protein insert arguments
-    arg_group_protein.add_argument("-proteins", "--proteins", type=bool, default=False, help='inbed protein structures in bilayer True/False (default: %(default)s)')
+    arg_group_protein.add_argument("-proteins", "--proteins", type=str, default=False, help='inbed protein structures in bilayer True/False (default: %(default)s)')
+    arg_group_protein.add_argument("-orient", "--orient", type=str, default=False, help='reorient protein structure with respect to bilayer True/False (default: %(default)s)')
     arg_group_protein.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
-    arg_group_protein.add_argument("-method", "--method", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protien structures in bilayer, choises: %(choices)s (default: %(default)s)')
+    arg_group_protein.add_argument("-method", "--method", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protien structures in bilayer, options: %(choices)s (default: %(default)s)')
 
     args = parser.parse_args()
 
     cwd = os.getcwd()
+
+
+    comp_from_csv = True
+    if args.lipids != None and args.nupper != None and args.nlower != None:
+        comp_from_csv = False
 
     delim = args.delim
 
@@ -293,8 +302,7 @@ def main():
 
     try:
         # Create output directory
-        timestamp = datetime.now().strftime("%M-%H-%d-%Y")
-        timestamp = datetime.now().strftime("%M-%H-%d-%Y")
+        timestamp = datetime.now().strftime("%Y-%m-%d-%H%M")
         base_dirname = f"run_{timestamp}"
         dirname = base_dirname
 
@@ -316,14 +324,25 @@ def main():
                 print(f"Copied {src_file} to {dst_file}")
             else:
                 print(f"File not found: {src_file}")
-        os.chdir(os.path.join(cwd, dirname))
-        cwd = os.getcwd()
 
-        # Load composition CSV
-        composition = pd.read_csv(comp_in, delimiter=delim, header=None)
-        composition.columns = ['lipid', 'upper', 'lower']
+        if comp_from_csv == True:
+            # Load composition CSV
+            composition = pd.read_csv(comp_in, delimiter=delim, header=None)
+            composition.columns = ['lipid', 'upper', 'lower']
+        else:
+            if not (len(args.lipids) == len(args.nupper) == len(args.nlower)):
+                raise ValueError("Options --lipids, --nupper, and --nlower must have the same number of arguments")
+            composition = pd.DataFrame({
+                "lipid": args.lipids,
+                "upper": args.nupper,
+                "lower": args.nlower
+            })
+
         # Load areas CSV
         areas = pd.read_csv('areas.csv', delimiter=delim)
+
+        os.chdir(os.path.join(cwd, dirname))
+        cwd = os.getcwd()
 
         # Merge on lipid name
         merged = composition.merge(areas, left_on='lipid', right_on='lipid')
@@ -355,14 +374,15 @@ def main():
         quit
 
     try:
-        if protein:
+        if protein == True:
             prot_coords, prot_ndxs = find_extreme_coords(protein_pdb)
+            print(prot_coords)
             diff_xy = np.abs(prot_coords[0:-1,1] - prot_coords[0:-1,0])
             r_cylider = np.max(diff_xy) * 0.525
-            h_cylider = np.abs(prot_coords[-1,1] - prot_coords[1,0]) * 1.05
-            prot_area = diff_xy[0] * diff_xy[1] * np.pi * n_protein
+            h_cylider = np.abs(prot_coords[-1,1] - prot_coords[-1,0]) * 1.05
+            prot_area = (diff_xy[0]*0.5) * (diff_xy[1]*0.5) * np.pi * n_protein
             xy_length = (avg_leaflet_area + prot_area) ** 0.5
-            print(f"After adding {n_protein} proteins, Box XY dimensions are: {xy_length:.2f} x {xy_length:.2f} Å")
+            print(f"After adding {n_protein} protein(s), Box XY dimensions are: {xy_length:.2f} x {xy_length:.2f} Å")
 
             if n_protein == 1:
                 prot_coms = np.array([[xy_length/2, xy_length/2]])
@@ -381,7 +401,11 @@ def main():
                     evaluate_distribution(prot_coms, np.array([0, xy_length]), np.array([0, xy_length]))
         
         # Fixed box Z (change to user query)
-        z = d_water * 2 + 21
+        if protein == True:
+            z = h_cylider * 1.5
+        else:
+            z = d_water * 2 + 21
+        
         z_center = z / 2
         
 
@@ -395,20 +419,21 @@ def main():
 
             f.write(f"output {struct_out_file}\n\n")
 
-            if protein:
+            if protein == True:
                 for i in range(n_protein):
                     z_cylinder_start = z_center - h_cylider / 2
                     z_cylinder_end = z_center + h_cylider / 2
                     z_max = prot_ndxs["z_max"]
                     z_min = prot_ndxs["z_min"]
+                    print(prot_coms, diff_xy)
                     f.write(f"structure {protein_pdb}\n")
                     f.write(f"  number 1\n")
-                    f.write(f"  inside cylinder {prot_coms[i,0]:.2f} {prot_coms[i,1]:.2f} {z_cylinder_start:.2f} 0. 0. 1. {r_cylider:.2f} {h_cylider:.2f}\n")
+                    f.write(f"  inside box {prot_coms[i,0]-(diff_xy[0]*0.5):.2f} {prot_coms[i,1]-(diff_xy[1]*0.5):.2f} {z_cylinder_start:.2f} {prot_coms[i,0]+(diff_xy[0]*0.5):.2f} {prot_coms[i,1]+(diff_xy[1]*0.5):.2f} {z_cylinder_end:.2f}\n")
                     f.write(f"  atoms {z_max:d}\n")
-                    f.write(f"    over plane 0. 0. 1. {z_center+0.5:.2f}\n")
+                    f.write(f"    over plane 0. 0. 1. {z_center+10:.2f}\n")
                     f.write("  end atoms\n")
                     f.write(f"  atoms {z_min:d}\n")
-                    f.write(f"    below plane 0. 0. 1. {z_center-0.5:.2f}\n")
+                    f.write(f"    below plane 0. 0. 1. {z_center-10:.2f}\n")
                     f.write("  end atoms\n")
                     f.write("end structure\n\n")
 
@@ -417,7 +442,7 @@ def main():
                 lipid = row['lipid']
                 upper = int(row['upper'])
                 lower = int(row['lower'])
-                pdb_file = f"./pdb/{lipid}-em.pdb"
+                pdb_file = f"../pdb/{lipid}-em.pdb"
 
                 info = find_tail_atoms(pdb_file)
                 first = info['first_atom']
