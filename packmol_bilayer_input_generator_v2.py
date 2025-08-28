@@ -7,6 +7,15 @@ from datetime import datetime
 import os
 import shutil
 
+
+
+atomic_masses = {
+    "H": 1.008, "C": 12.011, "N": 14.007, "O": 15.999,
+    "P": 30.974, "S": 32.06, "MG": 24.305, "ZN": 65.38,
+    "FE": 55.845, "CA": 40.078, "K": 39.098, "NA": 22.990,
+    "CL": 35.45
+}
+
 def find_tail_atoms(pdb_path):
     tail_A = []
     tail_B = []
@@ -33,33 +42,41 @@ def find_tail_atoms(pdb_path):
 
 
 
-def find_extreme_coords(pdb_file):
+def find_extreme_coords(pdb_file, z_range=None):
     """
-    Find the minimum and maximum x, y, z coordinates in a PDB file and the atom indices where they occur.
+    Find the minimum and maximum x, y, z coordinates in a PDB file 
+    within an optional z-coordinate range, and return atom indices.
+
+    Args:
+        pdb_file (str): Path to PDB file
+        z_range (tuple or None): (z_min, z_max). If None, use all atoms.
 
     Returns:
         extremes (np.ndarray): 3x2 array of min and max for x, y, z
-        indices (dict): indices of atoms with min/max x, y, z
+        indices (dict): atom indices of min/max x, y, z
     """
     coords = []
     atom_indices = []
 
     with open(pdb_file, 'r') as file:
-        for i, line in enumerate(file):
-            if line.startswith("ATOM") or line.startswith("HETATM"):
+        for line in file:
+            if line.startswith(("ATOM", "HETATM")):
                 try:
                     x = float(line[30:38])
                     y = float(line[38:46])
                     z = float(line[46:54])
                     ndx = int(line[6:11])
-                    coords.append([x, y, z])
-                    atom_indices.append(ndx)
+
+                    # Apply z-range filter if provided
+                    if z_range is None or (z_range[0] <= z <= z_range[1]):
+                        coords.append([x, y, z])
+                        atom_indices.append(ndx)
                 except ValueError:
                     continue
 
     coords = np.array(coords)
     if coords.size == 0:
-        raise ValueError("No atom coordinates found in the PDB file.")
+        raise ValueError("No atom coordinates found in the PDB file (or all filtered by z_range).")
 
     extremes = np.zeros((3, 2))
     indices = {'x_min': None, 'x_max': None, 'y_min': None, 'y_max': None, 'z_min': None, 'z_max': None}
@@ -232,6 +249,75 @@ def evaluate_distribution(points, x_range, y_range):
     plt.grid(True)
     plt.show()
 
+def get_mass(element):
+    """Return atomic mass for element, default 12.0 if unknown"""
+    return atomic_masses.get(element.upper(), 12.0)
+
+def center_pdb(input_pdb, output_pdb, box_size):
+    """
+    Center a protein PDB structure by COM and set box size.
+
+    Args:
+        input_pdb (str): input PDB filename
+        output_pdb (str): output PDB filename
+        box_size (tuple): (x, y, z) box dimensions
+    """
+    coords = []
+    masses = []
+    lines = []
+
+    # Parse coordinates + elements
+    with open(input_pdb, "r") as f:
+        for line in f:
+            lines.append(line)  # store ALL lines
+            if line.startswith(("ATOM", "HETATM")):
+                x = float(line[30:38])
+                y = float(line[38:46])
+                z = float(line[46:54])
+                coords.append([x, y, z])
+
+                # Try to infer element
+                element = line[76:78].strip()
+                if not element:
+                    element = line[12:14].strip()[0]
+                masses.append(get_mass(element))
+
+    coords = np.array(coords)
+    masses = np.array(masses)
+
+    if coords.size == 0:
+        raise ValueError("No atoms found in PDB file.")
+
+    # Compute center of mass
+    com = np.average(coords, axis=0, weights=masses)
+
+    # Target center of box
+    box_center = np.array([box_size[0]/2, box_size[1]/2, box_size[2]/2])
+
+    # Shift vector
+    shift = box_center - com
+
+    # Write new PDB with shifted coordinates
+    with open(output_pdb, "w") as f:
+        # Always insert new CRYST1 as first line
+        cryst1 = f"CRYST1{box_size[0]:9.3f}{box_size[1]:9.3f}{box_size[2]:9.3f}" \
+                 f"{90.00:7.2f}{90.00:7.2f}{90.00:7.2f} P 1           1\n"
+        f.write(cryst1)
+
+        atom_idx = 0
+        for line in lines:
+            if line.startswith(("ATOM", "HETATM")):
+                x = coords[atom_idx, 0] + shift[0]
+                y = coords[atom_idx, 1] + shift[1]
+                z = coords[atom_idx, 2] + shift[2]
+                new_line = f"{line[:30]}{x:8.3f}{y:8.3f}{z:8.3f}{line[54:]}"
+                f.write(new_line)
+                atom_idx += 1
+            elif not line.startswith("CRYST1"):  # skip old CRYST1 if present
+                f.write(line)
+
+    print(f"Protein centered in box {box_size} (COM method), written to {output_pdb}")
+
 def main():
 
 
@@ -253,15 +339,16 @@ def main():
     arg_group_utility.add_argument("-lipids", "--lipids", nargs='*', type = str, default=None, help='Name(s) of lipids constituting the membrane when not reading composition from .csv, order must match --nupper and --nlower (default: %(default)s)')
     arg_group_utility.add_argument("-nupper", "--nupper", nargs='*', type = int, default=None, help='Number of lipids constituting the membrane when not reading composition from .csv, order must match --lipids (default: %(default)s)')
     arg_group_utility.add_argument("-nlower", "--nlower", nargs='*', type = int, default=None, help='Number of lipids constituting the membrane when not reading composition from .csv, order must match --lipids (default: %(default)s)')
-    arg_group_utility.add_argument("-solvate", "--solvate", type=str, default=False, help='solvate created strcutre with solvent True/False (default: %(default)s)')
+    arg_group_utility.add_argument("-solvate", "--solvate", type=str, default='no', help='solvate created strcutre with solvent yes/no (default: %(default)s)')
     arg_group_utility.add_argument("-dsol", "--dsol", type=float, default=20, help='height of water layer above and below the bilayer [Å] (default: %(default)s)')
-    arg_group_utility.add_argument("-neutral", "--neutral", type=str, default=False, help='add ions (Na+/Cl-) to neutralize system net charge to 0 True/False (default: %(default)s)')
+    arg_group_utility.add_argument("-neutral", "--neutral", type=str, default='no', help='add ions (Na+/Cl-) to neutralize system net charge to 0 yes/no (default: %(default)s)')
 
     # protein insert arguments
-    arg_group_protein.add_argument("-proteins", "--proteins", type=str, default=False, help='inbed protein structures in bilayer True/False (default: %(default)s)')
-    arg_group_protein.add_argument("-orient", "--orient", type=str, default=False, help='reorient protein structure with respect to bilayer True/False (default: %(default)s)')
+    arg_group_protein.add_argument("-proteins", "--proteins", type=str, default='no', help='inbed protein structures in bilayer yes/no (default: %(default)s)')
+    arg_group_protein.add_argument("-orient", "--orient", type=str, default='no', help='reorient protein structure with respect to bilayer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
-    arg_group_protein.add_argument("-method", "--method", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protien structures in bilayer, options: %(choices)s (default: %(default)s)')
+    arg_group_protein.add_argument("-method", "--method", choices=['replace', 'scale'], default='replace', help='method for inserting protein structure in bilayer, options: %(choices)s (default: %(default)s)')
+    arg_group_protein.add_argument("-dstr", "--dstr", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protein structures in bilayer, options: %(choices)s (default: %(default)s)')
 
     args = parser.parse_args()
 
@@ -281,24 +368,39 @@ def main():
     packmol_out = args.out
     comp_in = args.comp
     protein_pdb = args.prot
+    centered_out_pdb = 'protein_center.pdb'
     #protein_pdb = 'AF-P11166-F1-model_v4.pdb'
     water_pdb = args.sol
 
     pbc = True
-    protein = args.proteins # embed protein to bilayer
+    if args.proteins == 'yes':
+        protein = True  # embed protein to bilayer
+    else:
+        protein = False
+
     n_protein = args.nprotein # number of protein copies to include
-    protein_distr_mode = args.method # distribution mode 'random', 'grid', or 'polygon'
+    protein_distr_mode = args.dstr # distribution mode 'random', 'grid', or 'polygon'
+    protein_insert_method = args.method # insertion method 'replace' or 'scale'
+
     plot_protein_dstr = True # plot protein COMs
 
-    solvate = args.solvate # solvate system with water beads
-    neutral = args.neutral # include neutralizing ions
+    if args.solvate == 'yes':
+        solvate = True  # solvate system with water beads
+    else:
+        solvate = False
+
+    if args.neutral == 'yes':
+        neutral = True  # include neutralizing ions
+    else:
+        neutral = False
+
 
     write_topol = True
 
-    run_packmol = False
 
     d_water = args.dsol # water layer above and below membrane [Å]
 
+    d_bilayer = 40 
 
     try:
         # Create output directory
@@ -374,15 +476,70 @@ def main():
         quit
 
     try:
+        # Fixed box Z (change to user query)
+        z = d_water*2 + d_bilayer
+
         if protein == True:
             prot_coords, prot_ndxs = find_extreme_coords(protein_pdb)
-            print(prot_coords)
             diff_xy = np.abs(prot_coords[0:-1,1] - prot_coords[0:-1,0])
             r_cylider = np.max(diff_xy) * 0.525
             h_cylider = np.abs(prot_coords[-1,1] - prot_coords[-1,0]) * 1.05
-            prot_area = (diff_xy[0]*0.5) * (diff_xy[1]*0.5) * np.pi * n_protein
-            xy_length = (avg_leaflet_area + prot_area) ** 0.5
-            print(f"After adding {n_protein} protein(s), Box XY dimensions are: {xy_length:.2f} x {xy_length:.2f} Å")
+            if (h_cylider * 1.5) > (d_water*2 + d_bilayer): 
+                z = h_cylider * 1.5
+            # estimate protein crosssectional area
+            cros_prot_coords, cros_prot_ndxs = find_extreme_coords(protein_pdb, np.array([z/2 - d_bilayer/2, z/2 + d_bilayer/2]))
+            cross_diff_xy = np.abs(cros_prot_coords[0:-1,1] - cros_prot_coords[0:-1,0])
+            if protein_insert_method == 'scale':                   
+                prot_area = (cross_diff_xy [0]*0.5) * (cross_diff_xy [1]*0.5) * np.pi * n_protein
+                xy_length = (avg_leaflet_area + prot_area) ** 0.5
+                print(f"After adding {n_protein} protein(s), Box XY dimensions are: {xy_length:.2f} x {xy_length:.2f} Å")
+
+            elif protein_insert_method == 'replace':
+                # make sure protein fits in box, if not, resize membrane
+                if np.max(diff_xy) > xy_length:
+                    # scale mebrane components
+                    print("!!!!!!!!!!!!!!!!!!!!!!!")  
+                    print("Initial bilayer dimensions are too small to fit imbedded protein structure with minimum immage convention.")
+                    print("Rescaling box size to fit protein in membrane.")
+                    xy_length_old = xy_length 
+                    xy_length = np.max(diff_xy) * 1.5
+
+                    # center protein in box 
+                    center_pdb(protein_pdb, centered_out_pdb, (xy_length, xy_length, z))
+                    # estimate protein crosssectional area
+                    cros_prot_coords, cros_prot_ndxs = find_extreme_coords(centered_out_pdb, np.array([z/2 - d_bilayer/2, z/2 + d_bilayer/2]))
+                    cross_diff_xy = np.abs(cros_prot_coords[0:-1,1] - cros_prot_coords[0:-1,0])
+
+                    prot_area = (cross_diff_xy [0]*0.5) * (cross_diff_xy [1]*0.5) * np.pi * n_protein
+                    area_lipid_new = xy_length ** 2 - prot_area
+                    l_scale = (area_lipid_new ** 0.5) / xy_length_old
+                    a_scale = int(np.round(l_scale**2, decimals=0))
+
+                    merged['upper'] = merged['upper'] * a_scale
+                    merged['lower'] = merged['lower'] * a_scale
+                    # Calculate total leaflet areas
+                    merged['upper_area'] = merged['upper'] * merged['area']
+                    merged['lower_area'] = merged['lower'] * merged['area']
+                    # Sum areas
+                    total_upper_area = merged['upper_area'].sum()
+                    total_lower_area = merged['lower_area'].sum()  
+                    # Average box xy dimensions (square box, can be changed to allow for general rectangular boxes)
+                    avg_leaflet_area = (total_upper_area + total_lower_area) / 2
+
+                    # Calculate net charge for adding counter ions
+                    total_charge = (merged['upper'] + merged['lower']) * merged['charge']
+                    total_charge = total_charge.sum()
+
+                    # print out 
+                    print("After scaling the new box dimensions are:")
+                    print(f"Estimated protein crosssectional area: {prot_area:.2f} Å²")
+                    print(f"Total upper leaflet lipid area: {total_upper_area:.2f} Å²")
+                    print(f"Total lower leaflet lipid area: {total_lower_area:.2f} Å²")
+                    print(f"Box XY dimensions: {xy_length:.2f} x {xy_length:.2f} Å")
+                    print(f"Total bilayer charge: {total_charge:.2f} e")
+                    print("!!!!!!!!!!!!!!!!!!!!!!!")
+
+
 
             if n_protein == 1:
                 prot_coms = np.array([[xy_length/2, xy_length/2]])
@@ -400,14 +557,7 @@ def main():
                 if plot_protein_dstr:
                     evaluate_distribution(prot_coms, np.array([0, xy_length]), np.array([0, xy_length]))
         
-        # Fixed box Z (change to user query)
-        if protein == True:
-            z = h_cylider * 1.5
-        else:
-            z = d_water * 2 + 21
-        
-        z_center = z / 2
-        
+        z_center = z / 2        
 
         with open(packmol_out, 'w') as f:
             f.write("tolerance 3.0\n")
@@ -419,7 +569,7 @@ def main():
 
             f.write(f"output {struct_out_file}\n\n")
 
-            if protein == True:
+            if (protein == True) and (protein_insert_method == 'scale'):
                 for i in range(n_protein):
                     z_cylinder_start = z_center - h_cylider / 2
                     z_cylinder_end = z_center + h_cylider / 2
@@ -437,7 +587,19 @@ def main():
                     f.write("  end atoms\n")
                     f.write("end structure\n\n")
 
+            elif (protein == True) and (protein_insert_method == 'replace'):
+                for i in range(n_protein):
+                    z_cylinder_start = z_center - h_cylider / 2
+                    z_cylinder_end = z_center + h_cylider / 2
+                    z_max = prot_ndxs["z_max"]
+                    z_min = prot_ndxs["z_min"]
+                    print(prot_coms, diff_xy)
+                    f.write(f"structure {centered_out_pdb}\n")
+                    f.write(f"  number 1\n")
+                    f.write(f"  fixed 0. 0. 0. 0. 0. 0.\n")
+                    f.write("end structure\n\n")        
 
+            # build lipid bilayer
             for idx, row in merged.iterrows():
                 lipid = row['lipid']
                 upper = int(row['upper'])
