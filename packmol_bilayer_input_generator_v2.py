@@ -40,6 +40,53 @@ def find_tail_atoms(pdb_path):
         'last_atom': last_atom
     }
 
+def average_lipid_length(pdb_file):
+    """
+    Compute the average distance between the phosphorus atom (P*) 
+    and the last tail atoms (*A, *B). 
+
+    If no P* is found, use the first atom in the file.
+    If no tail atoms are found, return None.
+    """
+    atoms = []
+
+    with open(pdb_file, 'r') as f:
+        for line in f:
+            if line.startswith(("ATOM", "HETATM")):
+                atom_name = line[12:16].strip()
+                x = float(line[30:38])
+                y = float(line[38:46])
+                z = float(line[46:54])
+                atoms.append((atom_name, np.array([x, y, z])))
+
+    if not atoms:
+        raise ValueError("No atoms found in PDB file.")
+
+    # Find reference atom (P*, else first atom)
+    ref_atom = None
+    for atom_name, coord in atoms:
+        if atom_name.startswith("P"):
+            ref_atom = coord
+            break
+    if ref_atom is None:
+        ref_atom = atoms[0][1]  # fallback to first atom
+
+    # Find last tail atoms (*A, *B)
+    tail_coords = {}
+    for atom_name, coord in reversed(atoms):  # reverse to get last occurrence
+        if atom_name.endswith("A") and "A" not in tail_coords:
+            tail_coords["A"] = coord
+        elif atom_name.endswith("B") and "B" not in tail_coords:
+            tail_coords["B"] = coord
+        if len(tail_coords) == 2:
+            break
+
+    # Compute average distance
+    if tail_coords:
+        distances = [np.linalg.norm(ref_atom - coord) for coord in tail_coords.values()]
+        return float(np.mean(distances))
+    else:
+        return None
 
 
 def find_extreme_coords(pdb_file, z_range=None):
@@ -316,7 +363,7 @@ def center_pdb(input_pdb, output_pdb, box_size):
             elif not line.startswith("CRYST1"):  # skip old CRYST1 if present
                 f.write(line)
 
-    print(f"Protein centered in box {box_size} (COM method), written to {output_pdb}")
+    #print(f"Protein centered in box {box_size} (COM method), written to {output_pdb}")
 
 def main():
 
@@ -396,11 +443,12 @@ def main():
 
 
     write_topol = True
+    rescale_box = True
 
 
     d_water = args.dsol # water layer above and below membrane [Å]
 
-    d_bilayer = 40 
+    d_bilayer = 40 # initial guess for bilayer thickness
 
     try:
         # Create output directory
@@ -476,7 +524,24 @@ def main():
         quit
 
     try:
-        # Fixed box Z (change to user query)
+        # determine bilayer width
+        lipid_lengths = []
+        tot_lipids = 0
+
+        for ndx, row in merged.iterrows():
+            lipid = row['lipid']
+            nr = int(row['upper']) + int(row['lower'])
+            ll_pdb_file = f"../pdb/{lipid}-em.pdb"
+            ll = average_lipid_length(ll_pdb_file)
+            if ll != None:
+                lipid_lengths.append(ll*nr)
+                tot_lipids += nr
+
+        if tot_lipids != 0:
+            d_bilayer = np.sum(lipid_lengths) / tot_lipids * 2
+
+        
+        # Determine box z
         z = d_water*2 + d_bilayer
 
         if protein == True:
@@ -487,30 +552,29 @@ def main():
             if (h_cylider * 1.5) > (d_water*2 + d_bilayer): 
                 z = h_cylider * 1.5
             # estimate protein crosssectional area
-            cros_prot_coords, cros_prot_ndxs = find_extreme_coords(protein_pdb, np.array([z/2 - d_bilayer/2, z/2 + d_bilayer/2]))
+            if np.max(diff_xy) > xy_length and rescale_box == True:
+                # scale mebrane components
+                print("!!!!!!!!!!!!!!!!!!!!!!!")  
+                print("Initial bilayer dimensions are too small to fit imbedded protein structure with minimum immage convention.")
+                print("Rescaling box size to fit protein in membrane.")
+                xy_length_old = xy_length 
+                xy_length = np.max(diff_xy) * 1.8
+
+            # center protein in box 
+            center_pdb(protein_pdb, centered_out_pdb, (xy_length, xy_length, z))
+            # estimate protein crosssectional area
+            cros_prot_coords, cros_prot_ndxs = find_extreme_coords(centered_out_pdb, np.array([z/2 - d_bilayer/2, z/2 + d_bilayer/2]))
+            
             cross_diff_xy = np.abs(cros_prot_coords[0:-1,1] - cros_prot_coords[0:-1,0])
+            prot_area = (cross_diff_xy [0]*0.5) * (cross_diff_xy [1]*0.5) * np.pi * n_protein
+
             if protein_insert_method == 'scale':                   
-                prot_area = (cross_diff_xy [0]*0.5) * (cross_diff_xy [1]*0.5) * np.pi * n_protein
                 xy_length = (avg_leaflet_area + prot_area) ** 0.5
                 print(f"After adding {n_protein} protein(s), Box XY dimensions are: {xy_length:.2f} x {xy_length:.2f} Å")
 
             elif protein_insert_method == 'replace':
                 # make sure protein fits in box, if not, resize membrane
-                if np.max(diff_xy) > xy_length:
-                    # scale mebrane components
-                    print("!!!!!!!!!!!!!!!!!!!!!!!")  
-                    print("Initial bilayer dimensions are too small to fit imbedded protein structure with minimum immage convention.")
-                    print("Rescaling box size to fit protein in membrane.")
-                    xy_length_old = xy_length 
-                    xy_length = np.max(diff_xy) * 1.5
-
-                    # center protein in box 
-                    center_pdb(protein_pdb, centered_out_pdb, (xy_length, xy_length, z))
-                    # estimate protein crosssectional area
-                    cros_prot_coords, cros_prot_ndxs = find_extreme_coords(centered_out_pdb, np.array([z/2 - d_bilayer/2, z/2 + d_bilayer/2]))
-                    cross_diff_xy = np.abs(cros_prot_coords[0:-1,1] - cros_prot_coords[0:-1,0])
-
-                    prot_area = (cross_diff_xy [0]*0.5) * (cross_diff_xy [1]*0.5) * np.pi * n_protein
+                if rescale_box == True:
                     area_lipid_new = xy_length ** 2 - prot_area
                     l_scale = (area_lipid_new ** 0.5) / xy_length_old
                     a_scale = int(np.round(l_scale**2, decimals=0))
@@ -560,7 +624,7 @@ def main():
         z_center = z / 2        
 
         with open(packmol_out, 'w') as f:
-            f.write("tolerance 3.0\n")
+            f.write("tolerance 5.0\n")
             f.write(f"filetype {struct_out_type}\n")
 
             if pbc:
@@ -569,7 +633,27 @@ def main():
 
             f.write(f"output {struct_out_file}\n\n")
 
-            if (protein == True) and (protein_insert_method == 'scale'):
+            if (protein == True) and (protein_insert_method == 'replace'):
+                if n_protein == 1:
+                    print(prot_coms, diff_xy)
+                    f.write(f"structure {centered_out_pdb}\n")
+                    f.write(f"  number 1\n")
+                    f.write(f"  fixed 0. 0. 0. 0. 0. 0.\n")
+                    f.write("end structure\n\n") 
+                if n_protein > 1:
+                    for i in range(n_protein):
+                        z_cylinder_start = z_center - h_cylider / 2
+                        z_cylinder_end = z_center + h_cylider / 2
+                        z_max = prot_ndxs["z_max"]
+                        z_min = prot_ndxs["z_min"]
+                        print(prot_coms, diff_xy)
+                        f.write(f"structure {protein_pdb}\n")
+                        f.write(f"  number 1\n")
+                        f.write(f"  center\n")
+                        f.write(f"  fixed {prot_coms[i,0]:.2f} {prot_coms[i,1]:.2f} {z_center:.2f} 0. 0. 0.\n")
+                        f.write("end structure\n\n") 
+
+            elif (protein == True) and (protein_insert_method == 'scale'):
                 for i in range(n_protein):
                     z_cylinder_start = z_center - h_cylider / 2
                     z_cylinder_end = z_center + h_cylider / 2
@@ -585,19 +669,7 @@ def main():
                     f.write(f"  atoms {z_min:d}\n")
                     f.write(f"    below plane 0. 0. 1. {z_center-10:.2f}\n")
                     f.write("  end atoms\n")
-                    f.write("end structure\n\n")
-
-            elif (protein == True) and (protein_insert_method == 'replace'):
-                for i in range(n_protein):
-                    z_cylinder_start = z_center - h_cylider / 2
-                    z_cylinder_end = z_center + h_cylider / 2
-                    z_max = prot_ndxs["z_max"]
-                    z_min = prot_ndxs["z_min"]
-                    print(prot_coms, diff_xy)
-                    f.write(f"structure {centered_out_pdb}\n")
-                    f.write(f"  number 1\n")
-                    f.write(f"  fixed 0. 0. 0. 0. 0. 0.\n")
-                    f.write("end structure\n\n")        
+                    f.write("end structure\n\n")       
 
             # build lipid bilayer
             for idx, row in merged.iterrows():

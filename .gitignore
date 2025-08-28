@@ -1,6 +1,7 @@
 # ignore .pdbs
 ./*.pdb
 ./*.gro
+./run_*
 bilayer.pdb
 *.md
 *.inp
