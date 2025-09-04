@@ -1,0 +1,25 @@
+; Generated Martini topology
+#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0.itp"
+
+#include "/worktmp/scd287/daily/martini3/lipids//worktmp/scd287/daily/martini3/lipidsmartini_v3.0.0_phospholipids_PE_v2.itp"
+#include "/worktmp/scd287/daily/martini3/lipids//worktmp/scd287/daily/martini3/lipidsmartini_v3.0.0_etherphospholipids_PE_v2.itp"
+
+#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_ions_v1.itp"
+
+#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_solvents_v1.itp"
+
+#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"
+#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"
+#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"
+
+#include "6qm9_proa.itp"
+#include "6qm9_prob.itp"
+
+[ system ]
+bilayer system
+
+[ molecules ]
+; Compound        #mols
+PROT           1
+PROB           1
+DOPE           1600

@@ -5,6 +5,7 @@ import sys
 import argparse
 from datetime import datetime
 import os
+import glob
 import shutil
 
 
@@ -365,6 +366,98 @@ def center_pdb(input_pdb, output_pdb, box_size):
 
     #print(f"Protein centered in box {box_size} (COM method), written to {output_pdb}")
 
+def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, dimer_bool = False, protein_bool = False):
+    """
+    Write a Martini .top file given a dataframe of lipid composition (upper/lower leaflet)
+    and net system charge.
+
+    Args:
+        output_file (str): Path to write .top file
+        system_name (str): Name of the system
+        df (pd.DataFrame): DataFrame with columns ['lipid', 'upper', 'lower']
+        total_charge (int): Net charge of system before neutralization
+    """
+    # Check required columns
+    if not {"lipid", "upper", "lower"}.issubset(df.columns):
+        raise ValueError("DataFrame must contain 'lipid', 'upper', and 'lower' columns")
+
+    # Determine ions required for neutralization
+    ions = {}
+    if total_charge > 0:
+        ions["CL-"] = total_charge
+    elif total_charge < 0:
+        ions["NA+"] = -total_charge
+
+    with open(top_file, "w") as f:
+        # Header
+        f.write("; Generated Martini topology\n")
+        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0.itp"\n\n')
+        for litp in lipid_itp:
+            f.write('#include "/worktmp/scd287/daily/martini3/lipids/'+ litp +'"\n')
+        f.write('\n')
+        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_ions_v1.itp"\n\n')
+        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_solvents_v1.itp"\n\n')
+
+        if protein_bool:
+            f.write('#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"\n')
+            f.write('#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"\n')
+            f.write('#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"\n\n')
+            for prot in protein_itp:
+                f.write('#include "' + prot +'"\n')
+            f.write('\n')
+        else:
+            f.write('\n')
+
+        # System section
+        f.write("[ system ]\n")
+        f.write(f"{system_name}\n\n")
+
+        # Molecules section
+        f.write("[ molecules ]\n")
+        f.write("; Compound        #mols\n")
+        if protein_bool == True:
+            for itp in protein_itp:
+                mol_name = get_molname_from_itp(itp)    
+                if dimer_bool:
+                    f.write(f"{mol_name:<15}{n_prot}\n")
+                else:
+                    f.write(f"{mol_name:<15}{n_prot}\n")
+        for _, row in df.iterrows():
+            total_count = int(row["upper"]) + int(row["lower"])
+            f.write(f"{row['lipid']:<15}{total_count}\n")
+        for ion, count in ions.items():
+            f.write(f"{ion:<15}{count}\n")
+
+    print(f"Topology written to {top_file}")
+    print(f"Net system charge before neutralization: {total_charge}")
+    if ions:
+        print(f"Added ions: {ions}")
+    else:
+        print("System already neutral.")
+
+
+def get_molname_from_itp(itp_file):
+    """
+    Extract the molecule name from a .itp file (from the [ moleculetype ] section).
+    """
+    with open(itp_file, "r") as f:
+        lines = f.readlines()
+
+    mol_name = None
+    in_section = False
+    for line in lines:
+        line = line.strip()
+        if line.startswith("[ moleculetype ]"):
+            in_section = True
+            continue
+        if in_section:
+            if line.startswith(";") or not line:  # skip comments/empty
+                continue
+            mol_name = line.split()[0]  # molecule name is first token
+            break
+
+    return mol_name
+
 def main():
 
 
@@ -374,11 +467,13 @@ def main():
     arg_group_protein = parser.add_argument_group('Protein')
     
     arg_group_general.add_argument("-out", "--out", type=str, default='packmol_input.inp', help='name of packmol output file (default: %(default)s)')
+    arg_group_general.add_argument("-top", "--top", type=str, default='topol.top', help='name of gromacs topology .top output file (default: %(default)s)')
     arg_group_general.add_argument("-comp", "--comp", type=str, required=True, help='name of lipid composition .csv file (default: %(default)s)')
     arg_group_protein.add_argument("-prot", "--prot",type=str, default = 'AF-P11166-F1-model_v4.pdb', help='name of protein struture file (default: %(default)s)')
+    arg_group_general.add_argument("-pitp", "--pitp", type=str, nargs='*', default=None, help='name(s) of protein gromacs topology .itp files (default: %(default)s)')
     arg_group_general.add_argument("-sol", "--sol", type=str, default='./pdb/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
     arg_group_general.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structure file to read gro or pdb (default: %(default)s)')
-    arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of outut strcture file (default: %(default)s)')
+    arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of outut structure file (default: %(default)s)')
     arg_group_general.add_argument("-delim", "--delim", type =str, default=';', help='delimiter used in .csv file (default: %(default)s)')
 
 
@@ -392,6 +487,7 @@ def main():
 
     # protein insert arguments
     arg_group_protein.add_argument("-proteins", "--proteins", type=str, default='no', help='inbed protein structures in bilayer yes/no (default: %(default)s)')
+    arg_group_protein.add_argument("-dimer", "--dimer", type=str, default='no', help='protein .pdb file contains a dimer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-orient", "--orient", type=str, default='no', help='reorient protein structure with respect to bilayer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
     arg_group_protein.add_argument("-method", "--method", choices=['replace', 'scale'], default='replace', help='method for inserting protein structure in bilayer, options: %(choices)s (default: %(default)s)')
@@ -428,6 +524,10 @@ def main():
     n_protein = args.nprotein # number of protein copies to include
     protein_distr_mode = args.dstr # distribution mode 'random', 'grid', or 'polygon'
     protein_insert_method = args.method # insertion method 'replace' or 'scale'
+    if args.dimer == 'yes':
+        dimer = True  # protein .pdb is a dimer
+    else:
+        dimer = False
 
     plot_protein_dstr = True # plot protein COMs
 
@@ -443,6 +543,11 @@ def main():
 
 
     write_topol = True
+    top_file = args.top
+    prot_itps = args.pitp
+
+    
+
     rescale_box = True
 
 
@@ -465,8 +570,8 @@ def main():
         print(f"Created output directory: {os.path.join(cwd, dirname)}")
 
         # copy input files to output directory
-        files_to_copy = [comp_in, protein_pdb]
-
+        files_to_copy = [comp_in, protein_pdb] + prot_itps
+        print(files_to_copy)
         for src_file in files_to_copy:
             if os.path.exists(src_file):
                 dst_file = os.path.join(dirname, os.path.basename(src_file))
@@ -518,6 +623,39 @@ def main():
         print(f"Total lower leaflet area: {total_lower_area:.2f} Å²")
         print(f"Box XY dimensions: {xy_length:.2f} x {xy_length:.2f} Å")
         print(f"Total bilayer charge: {total_charge:.2f} e")
+
+
+        itp_list = []
+        itp_dir = '/worktmp/scd287/daily/martini3/lipids'
+        for lipid in merged['lipid']:
+            suffix = lipid[-2:]
+            if suffix == 'PA':
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PA_v2.itp')
+                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PA_v2.itp')
+            elif suffix == 'PC':
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PC_v2.itp')
+                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PC_v2.itp')
+            elif suffix == 'PE': 
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PE_v2.itp')
+                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PE_v2.itp')
+            elif suffix == 'PG': 
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PG_v2.itp')
+                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PG_v2.itp')
+            elif suffix == 'PS': 
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PS_v2.itp')
+                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PS_v2.itp')
+            elif suffix == 'PI': 
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PI_v2.itp')
+            elif suffix == 'CL': 
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_CL_v2.itp')
+            elif suffix == 'SM': 
+                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_SM_v2.itp')
+        if len(itp_list) > 0:
+            lipid_itps =  itp_list
+        else:
+            itp_dir = '/worktmp/scd287/daily/martini3/lipids'
+            lipid_itps = glob.glob(os.path.join(itp_dir, "*s_*.tip"))
+        print(lipid_itps)
 
     except IOError:
         print("One or more of the provided files does not exists or unable to read file contents!")
@@ -744,6 +882,10 @@ def main():
                 f.write("end structure\n\n")
 
         print("PACKMOL input generated with updated box size and bilayer charge calculated.")
+
+        if write_topol:
+            print(lipid_itps)
+            write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, dimer_bool= dimer, protein_itp=prot_itps, lipid_itp = lipid_itps)
     except SystemExit:
         print("Program execution terminated!")
 
