@@ -473,8 +473,9 @@ def main():
     arg_group_general.add_argument("-pitp", "--pitp", type=str, nargs='*', default=None, help='name(s) of protein gromacs topology .itp files (default: %(default)s)')
     arg_group_general.add_argument("-sol", "--sol", type=str, default='./pdb/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
     arg_group_general.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structure file to read gro or pdb (default: %(default)s)')
-    arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of outut structure file (default: %(default)s)')
+    arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of output structure file (default: %(default)s)')
     arg_group_general.add_argument("-delim", "--delim", type =str, default=';', help='delimiter used in .csv file (default: %(default)s)')
+    arg_group_general.add_argument("-outdir", "--outdir", type=str, default=None, help='name of run output directory (default: "run_yyy-mm-dd-hhmm")')
 
 
     # solvation and utility arguments
