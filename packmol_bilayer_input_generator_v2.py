@@ -468,8 +468,8 @@ def main():
     
     arg_group_general.add_argument("-out", "--out", type=str, default='packmol_input.inp', help='name of packmol output file (default: %(default)s)')
     arg_group_general.add_argument("-top", "--top", type=str, default='topol.top', help='name of gromacs topology .top output file (default: %(default)s)')
-    arg_group_general.add_argument("-comp", "--comp", type=str, required=True, help='name of lipid composition .csv file (default: %(default)s)')
-    arg_group_protein.add_argument("-prot", "--prot",type=str, default = 'AF-P11166-F1-model_v4.pdb', help='name of protein struture file (default: %(default)s)')
+    arg_group_general.add_argument("-comp", "--comp", type=str, default=None, help='name of lipid composition .csv file (default: %(default)s)')
+    arg_group_protein.add_argument("-prot", "--prot",type=str, default = None, help='name of protein struture file (default: %(default)s)')
     arg_group_general.add_argument("-pitp", "--pitp", type=str, nargs='*', default=None, help='name(s) of protein gromacs topology .itp files (default: %(default)s)')
     arg_group_general.add_argument("-sol", "--sol", type=str, default='./pdb/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
     arg_group_general.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structure file to read gro or pdb (default: %(default)s)')
@@ -558,8 +558,15 @@ def main():
 
     try:
         # Create output directory
-        timestamp = datetime.now().strftime("%Y-%m-%d-%H%M")
-        base_dirname = f"run_{timestamp}"
+        outdir_name = args.outdir
+
+        if outdir_name != None:
+            base_dirname = outdir_name
+
+        else:
+            timestamp = datetime.now().strftime("%Y-%m-%d-%H%M")
+            base_dirname = f"run_{timestamp}"
+        
         dirname = base_dirname
 
         i = 1
@@ -571,8 +578,11 @@ def main():
         print(f"Created output directory: {os.path.join(cwd, dirname)}")
 
         # copy input files to output directory
-        files_to_copy = [comp_in, protein_pdb] + prot_itps
-        print(files_to_copy)
+        if comp_in != None:
+            files_to_copy = [comp_in, protein_pdb] + prot_itps
+        else:
+            files_to_copy = [protein_pdb] + prot_itps
+        #print(files_to_copy)
         for src_file in files_to_copy:
             if os.path.exists(src_file):
                 dst_file = os.path.join(dirname, os.path.basename(src_file))
@@ -627,7 +637,7 @@ def main():
 
 
         itp_list = []
-        itp_dir = '/worktmp/scd287/daily/martini3/lipids'
+        itp_dir = '/worktmp/scd287/daily/martini3/lipids/'
         for lipid in merged['lipid']:
             suffix = lipid[-2:]
             if suffix == 'PA':
@@ -654,9 +664,13 @@ def main():
         if len(itp_list) > 0:
             lipid_itps =  itp_list
         else:
-            itp_dir = '/worktmp/scd287/daily/martini3/lipids'
-            lipid_itps = glob.glob(os.path.join(itp_dir, "*s_*.tip"))
-        print(lipid_itps)
+            itp_dir2 = '/worktmp/scd287/daily/martini3/lipids/'
+            itp_dir = '../martini3/lipids/'
+            #lipid_itps = glob.glob(os.path.join(itp_dir, "*s_*.tip"))
+            lipid_itps_n = [os.path.basename(f) for f in glob.glob(os.path.join(itp_dir, "*.tip"))]
+            for name in lipid_itps_n:
+                lipid_itps.append(itp_dir2 + name)
+        #print(lipid_itps)
 
     except IOError:
         print("One or more of the provided files does not exists or unable to read file contents!")
@@ -774,7 +788,7 @@ def main():
 
             if (protein == True) and (protein_insert_method == 'replace'):
                 if n_protein == 1:
-                    print(prot_coms, diff_xy)
+                    #print(prot_coms, diff_xy)
                     f.write(f"structure {centered_out_pdb}\n")
                     f.write(f"  number 1\n")
                     f.write(f"  fixed 0. 0. 0. 0. 0. 0.\n")
@@ -785,7 +799,7 @@ def main():
                         z_cylinder_end = z_center + h_cylider / 2
                         z_max = prot_ndxs["z_max"]
                         z_min = prot_ndxs["z_min"]
-                        print(prot_coms, diff_xy)
+                        #print(prot_coms, diff_xy)
                         f.write(f"structure {protein_pdb}\n")
                         f.write(f"  number 1\n")
                         f.write(f"  center\n")
@@ -798,7 +812,7 @@ def main():
                     z_cylinder_end = z_center + h_cylider / 2
                     z_max = prot_ndxs["z_max"]
                     z_min = prot_ndxs["z_min"]
-                    print(prot_coms, diff_xy)
+                    #print(prot_coms, diff_xy)
                     f.write(f"structure {protein_pdb}\n")
                     f.write(f"  number 1\n")
                     f.write(f"  inside box {prot_coms[i,0]-(diff_xy[0]*0.5):.2f} {prot_coms[i,1]-(diff_xy[1]*0.5):.2f} {z_cylinder_start:.2f} {prot_coms[i,0]+(diff_xy[0]*0.5):.2f} {prot_coms[i,1]+(diff_xy[1]*0.5):.2f} {z_cylinder_end:.2f}\n")
