@@ -675,7 +675,11 @@ def main():
             for ln in nan_lipids:
                 itp_dir = packlipids_dir + '/data/ffs/martini3/lipids/top/'
                 ln_itp=itp_dir + ln +'.itp'
-                charges_from_itp.append(net_charge_from_itp(ln_itp))
+                if os.path.isfile(ln_itp):
+                    charges_from_itp.append(net_charge_from_itp(ln_itp))
+                else:
+                    # append with default values
+                    charges_from_itp.append(0.0)
             merged.loc[merged["charge"].isna(), "charge"] = charges_from_itp
 
         # Calculate total leaflet areas
