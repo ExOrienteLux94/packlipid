@@ -478,6 +478,36 @@ def get_molname_from_itp(itp_file):
 
     return mol_name
 
+def net_charge_from_itp(itp_file):
+    """
+    Parse a GROMACS .itp file and compute net molecular charge
+    from the [ atoms ] section.
+    """
+    in_atoms = False
+    total_charge = 0.0
+
+    with open(itp_file, "r") as f:
+        for line in f:
+            line = line.strip()
+            # Section handling
+            if line.startswith("["):
+                if line.lower().startswith("[ atoms ]") or line.lower().startswith("[atoms]"):
+                    in_atoms = True
+                else:
+                    in_atoms = False
+                continue
+
+            # Process lines inside [ atoms ]
+            if in_atoms and line and not line.startswith(";"):
+                parts = line.split()
+                try:
+                    charge = float(parts[6])  # 7th column is charge
+                    total_charge += charge
+                except (IndexError, ValueError):
+                    continue
+
+    return total_charge
+
 def main():
 
 
@@ -489,13 +519,13 @@ def main():
     arg_group_general.add_argument("-out", "--out", type=str, default='packmol_input.inp', help='name of packmol output file (default: %(default)s)')
     arg_group_general.add_argument("-top", "--top", type=str, default='topol.top', help='name of gromacs topology .top output file (default: %(default)s)')
     arg_group_general.add_argument("-comp", "--comp", type=str, default=None, help='name of lipid composition .csv file (default: %(default)s)')
-    arg_group_protein.add_argument("-prot", "--prot",type=str, default = None, help='name of protein struture file (default: %(default)s)')
     arg_group_general.add_argument("-pitp", "--pitp", type=str, nargs='*', default=None, help='name(s) of protein gromacs topology .itp files (default: %(default)s)')
-    arg_group_general.add_argument("-sol", "--sol", type=str, default='./pdb/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
+    arg_group_general.add_argument("-sol", "--sol", type=str, default=None, help='name of solvent molecule strcture file (default: %(default)s)')
     arg_group_general.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structure file to read gro or pdb (default: %(default)s)')
     arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of output structure file (default: %(default)s)')
     arg_group_general.add_argument("-delim", "--delim", type =str, default=';', help='delimiter used in .csv file (default: %(default)s)')
-    arg_group_general.add_argument("-outdir", "--outdir", type=str, default=None, help='name of run output directory (default: "run_yyy-mm-dd-hhmm")')
+    arg_group_general.add_argument("-delim", "--delim", type =str, default=None, help='delimiter used in .csv file (default: %(default)s)')
+    arg_group_general.add_argument("-ff", "--ff", type=str, choices=['martini2', 'martini3'], default='martini3', help=' (default: %(default)s)')
 
 
     # solvation and utility arguments
@@ -507,6 +537,7 @@ def main():
     arg_group_utility.add_argument("-neutral", "--neutral", type=str, default='no', help='add ions (Na+/Cl-) to neutralize system net charge to 0 yes/no (default: %(default)s)')
 
     # protein insert arguments
+    arg_group_protein.add_argument("-prot", "--prot",type=str, default = None, help='name of protein struture file (default: %(default)s)')
     arg_group_protein.add_argument("-proteins", "--proteins", type=str, default='no', help='inbed protein structures in bilayer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-dimer", "--dimer", type=str, default='no', help='protein .pdb file contains a dimer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-orient", "--orient", type=str, default='no', help='reorient protein structure with respect to bilayer yes/no (default: %(default)s)')
@@ -516,9 +547,9 @@ def main():
 
     args = parser.parse_args()
 
-    cwd = os.getcwd()
     test = True
     #
+    cwd = os.getcwd()
     packlipids_dir = os.path.dirname(os.path.realpath(sys.argv[0])) # directory where packlipids is installed
 
     comp_from_csv = True
@@ -526,6 +557,7 @@ def main():
         comp_from_csv = False
 
     delim = args.delim
+    ffield = args.ff
 
     struct_out_type = args.struct # type of output file, should add check to see if particle number exceeds 9999 (limit of pdb format)
     struct_out_pref = args.pref # output file prefix
@@ -626,11 +658,25 @@ def main():
         # Load areas CSV
         areas = pd.read_csv('areas.csv', delimiter=delim)
 
-        os.chdir(os.path.join(cwd, dirname))
-        cwd = os.getcwd()
+        #os.chdir(os.path.join(cwd, dirname))
+        #cwd = os.getcwd()
 
         # Merge on lipid name
         merged = composition.merge(areas, left_on='lipid', right_on='lipid')
+        merged["area"]   = merged["area"].fillna(60) # fill out missing areas
+
+        #check for NaN values in charge
+        nan_ndx = merged[merged["charge"].isna()].index
+
+        if len(nan_ndx)>0:
+            nan_lipids = merged.loc[merged["charge"].isna(), "lipid"].tolist()
+            # query lipid net harge from itp file
+            charges_from_itp = []
+            for ln in nan_lipids:
+                itp_dir = packlipids_dir + '/data/ffs/martini3/lipids/top/'
+                ln_itp=itp_dir + ln +'.itp'
+                charges_from_itp.append(net_charge_from_itp(ln_itp))
+            merged.loc[merged["charge"].isna(), "charge"] = charges_from_itp
 
         # Calculate total leaflet areas
         merged['upper_area'] = merged['upper'] * merged['area']
@@ -656,37 +702,38 @@ def main():
 
 
         itp_list = []
-        itp_dir = packlipids_dir + '/data/martini3/lipids/'
-        # figure out which lipid its are needed
-        for lipid in merged['lipid']:
-            suffix = lipid[-2:]
-            if suffix == 'PA':
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PA_v2.itp')
-                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PA_v2.itp')
-            elif suffix == 'PC':
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PC_v2.itp')
-                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PC_v2.itp')
-            elif suffix == 'PE': 
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PE_v2.itp')
-                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PE_v2.itp')
-            elif suffix == 'PG': 
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PG_v2.itp')
-                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PG_v2.itp')
-            elif suffix == 'PS': 
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PS_v2.itp')
-                itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PS_v2.itp')
-            elif suffix == 'PI': 
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PI_v2.itp')
-            elif suffix == 'CL': 
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_CL_v2.itp')
-            elif suffix == 'SM': 
-                itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_SM_v2.itp')
-            else:
-                lipid_itps = glob.glob(os.path.join(itp_dir, "*.itp"))
-                for fn in lipid_itps:
-                    if lipid in get_molnames(fn, target=str(lipid)):
-                        itp_list.append(fn)
-                        break
+        if ffield == 'martini3':
+            itp_dir = packlipids_dir + '/data/ffs/martini3/lipids/'
+            # figure out which lipid its are needed
+            for lipid in merged['lipid']:
+                suffix = lipid[-2:]
+                if suffix == 'PA':
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PA_v2.itp')
+                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PA_v2.itp')
+                elif suffix == 'PC':
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PC_v2.itp')
+                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PC_v2.itp')
+                elif suffix == 'PE': 
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PE_v2.itp')
+                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PE_v2.itp')
+                elif suffix == 'PG': 
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PG_v2.itp')
+                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PG_v2.itp')
+                elif suffix == 'PS': 
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PS_v2.itp')
+                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PS_v2.itp')
+                elif suffix == 'PI': 
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PI_v2.itp')
+                elif suffix == 'CL': 
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_CL_v2.itp')
+                elif suffix == 'SM': 
+                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_SM_v2.itp')
+                else:
+                    lipid_itps = glob.glob(os.path.join(itp_dir, "*.itp"))
+                    for fn in lipid_itps:
+                        if lipid in get_molnames(fn, target=str(lipid)):
+                            itp_list.append(fn)
+                            break
             
         #print(lipid_itps)
 
@@ -702,7 +749,10 @@ def main():
         for ndx, row in merged.iterrows():
             lipid = row['lipid']
             nr = int(row['upper']) + int(row['lower'])
-            ll_pdb_file = f"../pdb/{lipid}-em.pdb"
+            if ffield == 'martini3':
+                ll_pdb_file = f"../pdb/martini3/{lipid}.pdb"
+            elif ffield =='martini2':
+                ll_pdb_file = f"../pdb/martini2/{lipid}-em.pdb"
             ll = average_lipid_length(ll_pdb_file)
             if ll != None:
                 lipid_lengths.append(ll*nr)
