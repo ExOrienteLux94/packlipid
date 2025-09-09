@@ -1,0 +1,16 @@
+TITLE     DULE
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NH3 DULE    1      71.409  76.109  74.072  1.00  0.00            
+ATOM      2  PO4 DULE    1      68.319  75.059  75.472  1.00  0.00            
+ATOM      3  GL1 DULE    1      70.939  73.259  78.322  1.00  0.00            
+ATOM      4  PL2 DULE    1      72.079  71.579  75.972  1.00  0.00            
+ATOM      5  C1A DULE    1      73.949  75.329  78.592  1.00  0.00            
+ATOM      6  C2A DULE    1      76.859  77.309  76.412  1.00  0.00            
+ATOM      7  C3A DULE    1      80.169  79.109  73.172  1.00  0.00            
+ATOM      8  C1B DULE    1      75.109  72.769  74.862  1.00  0.00            
+ATOM      9  C2B DULE    1      78.529  74.029  72.782  1.00  0.00            
+ATOM     10  C3B DULE    1      82.639  75.449  70.342  1.00  0.00            
+TER
+ENDMDL

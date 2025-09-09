@@ -1,0 +1,14 @@
+TITLE     DJLS
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  CNO DJLS    1      73.734  71.448  74.664  1.00  0.00            
+ATOM      2  PO4 DJLS    1      70.294  73.177  74.254  1.00  0.00            
+ATOM      3  GL1 DJLS    1      72.044  77.088  74.034  1.00  0.00            
+ATOM      4  PL2 DJLS    1      71.614  77.357  77.114  1.00  0.00            
+ATOM      5  C1A DJLS    1      76.394  76.507  73.134  1.00  0.00            
+ATOM      6  C2A DJLS    1      81.414  75.577  72.264  1.00  0.00            
+ATOM      7  C1B DJLS    1      75.234  75.747  78.154  1.00  0.00            
+ATOM      8  C2B DJLS    1      79.274  73.098  76.384  1.00  0.00            
+TER
+ENDMDL

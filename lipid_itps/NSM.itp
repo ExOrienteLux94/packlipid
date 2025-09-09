@@ -1,0 +1,57 @@
+[moleculetype]
+; molname      nrexcl
+  NSM          1
+
+[atoms]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    (mass)
+   1     Q1   1   NSM  NC3   1 	1.0
+   2     Q5   1   NSM  PO4   2 	-1.0
+   3    SP1   1   NSM  OH1   3 	0
+   4    SP2   1   NSM  AM2   4 	0
+   5   SC4h   1   NSM  T1A   5 	0
+   6     C1   1   NSM  C2A   6 	0
+   7     C1   1   NSM  C3A   7 	0
+   8     C1   1   NSM  C4A   8 	0
+   9    SC1   1   NSM  C1B   9 	0
+  10     C1   1   NSM  C2B  10 	0
+  11     C1   1   NSM  C3B  11 	0
+  12    C4h   1   NSM  D4B  12 	0
+  13     C1   1   NSM  C5B  13 	0
+  14     C1   1   NSM  C6B  14 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+   1  2 	1 	0.404	7000.0
+   2  3 	1 	0.380	6000.0
+   2  4 	1 	0.490	6000.0
+   3  4 	1 	0.305  20000.0
+   3  5 	1 	0.345  20000.0
+   5  6 	1      0.405    4400.0    ; symmetric to b_SC1_C4_mid
+   6  7 	1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
+   7  8 	1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
+   4  9 	1 	0.330	4000.0
+   9 10 	1      0.420    4400.0    ; to be used between S to R beads
+  10 11 	1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
+  11 12 	1      0.475    2800.0    ; containing a double bond in one bead
+  12 13 	1      0.475    2800.0    ; symmetric, same as b_C1_C4_mid
+  13 14 	1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+   1  2  3 	1	122.0	15.0
+   2  3  5 	1	175.0	15.0
+   4  3  5 	1	 85.0	60.0
+   3  4  9 	1	150.0	45.0
+   3  5  6 	1	180.0	13.5 ; trans double bond
+   5  6  7 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+   6  7  8 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+   4  9 10 	1	180.0	13.5
+   9 10 11 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+  10 11 12 	1      180.0	13.5   ; across a beads containing a double bond in the first/third bead
+  11 12 13 	1      140.0	10.0   ; one unsaturation
+  12 13 14 	1      180.0	13.5   ; identical to a_C1_C1_C1 to improve transition temperatures of singly unsaturated lipids
+
+
+

@@ -1,0 +1,16 @@
+TITLE     DUPC
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NC3 DUPC    1      70.870  72.884  74.962  1.00  0.00            
+ATOM      2  PO4 DUPC    1      70.100  75.804  77.622  1.00  0.00            
+ATOM      3  GL1 DUPC    1      71.620  79.324  75.622  1.00  0.00            
+ATOM      4  GL2 DUPC    1      71.380  77.674  73.022  1.00  0.00            
+ATOM      5  C1A DUPC    1      75.280  79.024  75.852  1.00  0.00            
+ATOM      6  C2A DUPC    1      78.640  76.624  75.392  1.00  0.00            
+ATOM      7  C3A DUPC    1      81.800  72.864  74.622  1.00  0.00            
+ATOM      8  C1B DUPC    1      74.370  75.464  73.092  1.00  0.00            
+ATOM      9  C2B DUPC    1      76.540  72.074  74.172  1.00  0.00            
+ATOM     10  C3B DUPC    1      79.400  68.264  75.642  1.00  0.00            
+TER
+ENDMDL

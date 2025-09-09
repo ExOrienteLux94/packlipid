@@ -1,0 +1,16 @@
+TITLE     DMPG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DMPG    1      72.539  77.620  73.801  1.00  0.00            
+ATOM      2  PO4 DMPG    1      68.889  77.300  73.051  1.00  0.00            
+ATOM      3  GL1 DMPG    1      69.889  73.260  74.111  1.00  0.00            
+ATOM      4  GL2 DMPG    1      70.249  72.670  71.091  1.00  0.00            
+ATOM      5  C1A DMPG    1      73.829  73.170  76.231  1.00  0.00            
+ATOM      6  C2A DMPG    1      78.429  73.590  78.581  1.00  0.00            
+ATOM      7  C3A DMPG    1      82.949  74.360  80.531  1.00  0.00            
+ATOM      8  C1B DMPG    1      74.489  73.730  71.051  1.00  0.00            
+ATOM      9  C2B DMPG    1      77.849  76.150  74.071  1.00  0.00            
+ATOM     10  C3B DMPG    1      80.889  78.150  77.481  1.00  0.00            
+TER
+ENDMDL

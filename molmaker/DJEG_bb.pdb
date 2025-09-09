@@ -1,0 +1,14 @@
+TITLE     DJEG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DJEG    1      72.509  79.129  75.049  1.00  0.00            
+ATOM      2  PO4 DJEG    1      71.819  76.289  77.389  1.00  0.00            
+ATOM      3  ET1 DJEG    1      74.599  73.479  75.739  1.00  0.00            
+ATOM      4  ET2 DJEG    1      75.269  75.509  73.499  1.00  0.00            
+ATOM      5  C1A DJEG    1      74.069  69.599  74.459  1.00  0.00            
+ATOM      6  C2A DJEG    1      73.409  64.699  72.849  1.00  0.00            
+ATOM      7  C1B DJEG    1      77.729  78.649  74.689  1.00  0.00            
+ATOM      8  C2B DJEG    1      80.599  82.649  76.329  1.00  0.00            
+TER
+ENDMDL

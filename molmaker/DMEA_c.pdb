@@ -1,0 +1,13 @@
+TITLE     single lipid
+MODEL        1
+ATOM      1  PO4 DMEA    1      -2.090  -1.570  13.560  1.00  0.00            
+ATOM      2  ET1 DMEA    1      -1.260  -1.600   7.620  1.00  0.00            
+ATOM      3  ET2 DMEA    1       0.760   0.610   6.210  1.00  0.00            
+ATOM      4  C1A DMEA    1      -1.910  -1.750   2.480  1.00  0.00            
+ATOM      5  C2A DMEA    1      -1.680  -1.620  -3.600  1.00  0.00            
+ATOM      6  C3A DMEA    1      -1.630  -1.350  -9.810  1.00  0.00            
+ATOM      7  C1B DMEA    1       1.460   1.340   0.300  1.00  0.00            
+ATOM      8  C2B DMEA    1       2.820   2.410  -5.310  1.00  0.00            
+ATOM      9  C3B DMEA    1       3.550   3.530 -11.490  1.00  0.00            
+TER
+ENDMDL

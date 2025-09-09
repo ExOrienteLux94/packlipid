@@ -1,0 +1,14 @@
+TITLE     DTEG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DTEG    1      73.360  73.095  76.111  1.00  0.00            
+ATOM      2  PO4 DTEG    1      71.450  75.865  77.771  1.00  0.00            
+ATOM      3  ET1 DTEG    1      72.830  77.695  74.121  1.00  0.00            
+ATOM      4  ET2 DTEG    1      75.380  78.485  75.661  1.00  0.00            
+ATOM      5  C1A DTEG    1      74.360  75.495  72.091  1.00  0.00            
+ATOM      6  C2A DTEG    1      76.900  72.105  71.771  1.00  0.00            
+ATOM      7  C1B DTEG    1      77.240  75.615  75.761  1.00  0.00            
+ATOM      8  C2B DTEG    1      78.480  71.645  76.711  1.00  0.00            
+TER
+ENDMDL

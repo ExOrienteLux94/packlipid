@@ -1,0 +1,16 @@
+TITLE     DMES
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  CNO DMES    1      72.134  76.808  76.747  1.00  0.00            
+ATOM      2  PO4 DMES    1      68.654  75.538  75.597  1.00  0.00            
+ATOM      3  ET1 DMES    1      70.024  74.768  71.577  1.00  0.00            
+ATOM      4  ET2 DMES    1      70.884  71.938  72.527  1.00  0.00            
+ATOM      5  C1A DMES    1      73.784  76.138  70.967  1.00  0.00            
+ATOM      6  C2A DMES    1      78.414  76.148  73.177  1.00  0.00            
+ATOM      7  C3A DMES    1      82.534  75.818  75.967  1.00  0.00            
+ATOM      8  C1B DMES    1      74.574  72.308  74.457  1.00  0.00            
+ATOM      9  C2B DMES    1      77.864  74.198  77.947  1.00  0.00            
+ATOM     10  C3B DMES    1      81.134  76.338  81.037  1.00  0.00            
+TER
+ENDMDL

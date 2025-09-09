@@ -1,0 +1,12 @@
+TITLE     single lipid
+MODEL        1
+ATOM      1  GL0 DTEG    1      -3.270  -1.740   9.330  1.00  0.00            
+ATOM      2  PO4 DTEG    1      -0.890   1.240   9.020  1.00  0.00            
+ATOM      3  ET1 DTEG    1      -1.600   0.960   2.290  1.00  0.00            
+ATOM      4  ET2 DTEG    1       1.120  -0.610   0.710  1.00  0.00            
+ATOM      5  C1A DTEG    1      -1.470   1.670  -2.320  1.00  0.00            
+ATOM      6  C2A DTEG    1      -1.890   0.970  -7.440  1.00  0.00            
+ATOM      7  C1B DTEG    1       3.030  -0.680  -3.270  1.00  0.00            
+ATOM      8  C2B DTEG    1       4.930  -1.790  -8.310  1.00  0.00            
+TER
+ENDMDL

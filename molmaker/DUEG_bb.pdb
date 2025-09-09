@@ -1,0 +1,16 @@
+TITLE     DUEG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DUEG    1      73.428  75.797  77.198  1.00  0.00            
+ATOM      2  PO4 DUEG    1      71.288  78.847  76.878  1.00  0.00            
+ATOM      3  ET1 DUEG    1      70.248  76.587  73.348  1.00  0.00            
+ATOM      4  ET2 DUEG    1      72.568  78.037  71.938  1.00  0.00            
+ATOM      5  C1A DUEG    1      71.698  73.567  73.288  1.00  0.00            
+ATOM      6  C2A DUEG    1      75.198  71.577  74.238  1.00  0.00            
+ATOM      7  C3A DUEG    1      79.758  70.117  75.598  1.00  0.00            
+ATOM      8  C1B DUEG    1      75.408  76.507  73.058  1.00  0.00            
+ATOM      9  C2B DUEG    1      78.488  75.297  75.618  1.00  0.00            
+ATOM     10  C3B DUEG    1      81.918  73.667  78.838  1.00  0.00            
+TER
+ENDMDL

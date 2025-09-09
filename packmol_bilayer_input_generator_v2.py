@@ -366,6 +366,25 @@ def center_pdb(input_pdb, output_pdb, box_size):
 
     #print(f"Protein centered in box {box_size} (COM method), written to {output_pdb}")
 
+def get_molnames(itp_file, target=None):
+    molnames = []
+    with open(itp_file, "r") as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines, start=1):
+        if line.strip().startswith("; molname"):
+            # The next non-empty, non-comment line is the molecule name
+            j = i
+            while j < len(lines):
+                candidate = lines[j].strip()
+                if candidate and not candidate.startswith(";") and not candidate.startswith("["):
+                    name = candidate.split()[0]
+                    if target is None or name == target:
+                        molnames.append((j+1, name))  # store line number and name
+                    break
+                j += 1
+    return molnames
+
 def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, dimer_bool = False, protein_bool = False):
     """
     Write a Martini .top file given a dataframe of lipid composition (upper/lower leaflet)
@@ -438,6 +457,7 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
 
 def get_molname_from_itp(itp_file):
     """
+    DEPRECATED!!!!
     Extract the molecule name from a .itp file (from the [ moleculetype ] section).
     """
     with open(itp_file, "r") as f:
@@ -638,6 +658,7 @@ def main():
 
         itp_list = []
         itp_dir = '/worktmp/scd287/daily/martini3/lipids/'
+        # figure out which lipid its are needed
         for lipid in merged['lipid']:
             suffix = lipid[-2:]
             if suffix == 'PA':
@@ -661,15 +682,13 @@ def main():
                 itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_CL_v2.itp')
             elif suffix == 'SM': 
                 itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_SM_v2.itp')
-        if len(itp_list) > 0:
-            lipid_itps =  itp_list
-        else:
-            itp_dir2 = '/worktmp/scd287/daily/martini3/lipids/'
-            itp_dir = '../martini3/lipids/'
-            #lipid_itps = glob.glob(os.path.join(itp_dir, "*s_*.tip"))
-            lipid_itps_n = [os.path.basename(f) for f in glob.glob(os.path.join(itp_dir, "*.tip"))]
-            for name in lipid_itps_n:
-                lipid_itps.append(itp_dir2 + name)
+            else:
+                lipid_itps = glob.glob(os.path.join(itp_dir, "*.itp"))
+                for fn in lipid_itps:
+                    if lipid in get_molnames(fn, target=str(lipid)):
+                        itp_list.append(fn)
+                        break
+            
         #print(lipid_itps)
 
     except IOError:

@@ -1,0 +1,16 @@
+TITLE     DMLC
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NC3 DMLC    1      73.211  75.234  76.839  1.00  0.00            
+ATOM      2  PO4 DMLC    1      69.741  73.534  75.669  1.00  0.00            
+ATOM      3  GL1 DMLC    1      71.091  72.534  71.599  1.00  0.00            
+ATOM      4  PL2 DMLC    1      72.281  69.934  72.819  1.00  0.00            
+ATOM      5  C1A DMLC    1      74.401  75.494  71.329  1.00  0.00            
+ATOM      6  C2A DMLC    1      76.421  78.924  74.549  1.00  0.00            
+ATOM      7  C3A DMLC    1      76.801  78.974  79.489  1.00  0.00            
+ATOM      8  C1B DMLC    1      75.861  71.294  74.349  1.00  0.00            
+ATOM      9  C2B DMLC    1      78.871  74.884  76.439  1.00  0.00            
+ATOM     10  C3B DMLC    1      81.321  79.194  76.919  1.00  0.00            
+TER
+ENDMDL

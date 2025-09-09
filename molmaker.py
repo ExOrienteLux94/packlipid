@@ -25,7 +25,7 @@
 ###########################################
 
 mdp_template = '''\
-define                   = -DFLEXIBLE
+;define                   = -DFLEXIBLE
 integrator               = {integrator}
 emtol                    = 0.1
 nsteps                   = {nsteps}
@@ -33,26 +33,41 @@ nstxout                  = 1
 nstcgsteep               = 50
 nstlist                  = 1
 ns-type                  = grid
-pbc                      = no
-epsilon_r                = {eps}
+pbc                      = xyz
+epsilon_r                = 15
 lincs_order              = 8
+rcoulomb                 = 2.0
+rvdw                     = 2.0
 lincs_iter               = 2
 continuation             = yes
+;free-energy              = yes
+;init-lambda              = 0
+;delta-lambda             = 0.002
+;couple-moltype           = system
+;couple-lambda0           = none
+;couple-lambda1           = vdw-q
+;couple-intramol          = yes
+;sc-power                 = 2
+;sc-alpha                 = 1.5
+;sc-sigma                 = 0.2
 free-energy              = yes
-init-lambda              = 0
-delta-lambda             = 0.002
-couple-moltype           = system
-couple-lambda0           = none
-couple-lambda1           = vdw-q
-couple-intramol          = yes
+init-lambda              = 0.01
+sc-alpha                 = 4
 sc-power                 = 2
-sc-alpha                 = 1.5
-sc-sigma                 = 0.2
+sc-coul                  = yes
+nstdhdl                  = 0 
+couple-moltype           = system
+; we are changing both the vdw and the charge. In the initial state, both are on
+couple-lambda0           = vdw-q
+; in the final state, both are off.
+couple-lambda1           = none
+couple-intramol          = yes
 '''
 
 mdp_template_gmx5 = '''\
 ; The following line(s) will be appended if running gmx >= 5.0
-cutoff-scheme            = group
+cutoff-scheme            = Verlet
+verlet-buffer-tolerance  = 0.005
 '''
 
 ## OK, no touchy from here onwards ########
@@ -393,6 +408,7 @@ class MolMaker(argparse.ArgumentParser):
 
     top_template = '''\
 #include "{ff_itp}"
+#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_ffbonded_v2.itp"
 #include "{mol_itp}"
 [ system ]
 {molname}
@@ -452,8 +468,8 @@ class MolMaker(argparse.ArgumentParser):
                                           self.gmxversion ).groups()[0])
         if self.gmxversion < 4.5:
             sys.exit('Error: GMX version must be 4.5 or higher.')
-        elif self.gmxversion >= 2020:
-            sys.exit('Error: GMX versions 2020 and greater are not supported.')
+        #elif self.gmxversion >= 2020:
+        #    sys.exit('Error: GMX versions 2020 and greater are not supported.')
 
         if not self.values.ff:
             try:
@@ -538,7 +554,7 @@ class MolMaker(argparse.ArgumentParser):
                          self.values.fuzzy*random.random()+0.025
                            *self.atoms-0.5*self.values.fuzzy),
                       file=gro)
-            box_len = max(0.2*self.atoms, 2.0)
+            box_len = max(0.2*self.atoms, 10)
             print('%f %f %f' % (box_len, box_len, box_len), file=gro)
 
     def createtop(self):

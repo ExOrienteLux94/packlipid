@@ -1,0 +1,14 @@
+TITLE     DJPG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DJPG    1      72.961  75.856  77.351  1.00  0.00            
+ATOM      2  PO4 DJPG    1      69.411  74.876  76.701  1.00  0.00            
+ATOM      3  GL1 DJPG    1      71.651  72.646  73.801  1.00  0.00            
+ATOM      4  GL2 DJPG    1      72.301  75.366  72.471  1.00  0.00            
+ATOM      5  C1A DJPG    1      75.761  71.916  75.061  1.00  0.00            
+ATOM      6  C2A DJPG    1      80.541  73.656  75.941  1.00  0.00            
+ATOM      7  C1B DJPG    1      76.401  76.866  73.601  1.00  0.00            
+ATOM      8  C2B DJPG    1      80.971  78.816  75.071  1.00  0.00            
+TER
+ENDMDL

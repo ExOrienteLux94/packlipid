@@ -1,0 +1,16 @@
+TITLE     DUEE
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NH3 DUEE    1      74.740  72.905  72.343  1.00  0.00            
+ATOM      2  PO4 DUEE    1      71.670  71.885  70.853  1.00  0.00            
+ATOM      3  ET1 DUEE    1      70.550  75.765  72.243  1.00  0.00            
+ATOM      4  ET2 DUEE    1      70.270  74.495  75.043  1.00  0.00            
+ATOM      5  C1A DUEE    1      73.050  77.825  73.113  1.00  0.00            
+ATOM      6  C2A DUEE    1      76.640  78.165  75.143  1.00  0.00            
+ATOM      7  C3A DUEE    1      80.750  77.735  77.903  1.00  0.00            
+ATOM      8  C1B DUEE    1      73.250  74.745  76.693  1.00  0.00            
+ATOM      9  C2B DUEE    1      77.170  73.795  77.813  1.00  0.00            
+ATOM     10  C3B DUEE    1      81.910  72.685  78.853  1.00  0.00            
+TER
+ENDMDL

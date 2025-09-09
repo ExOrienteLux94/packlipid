@@ -1,0 +1,16 @@
+TITLE     DRLE
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NH3 DRLE    1      71.660  74.588  76.422  1.00  0.00            
+ATOM      2  PO4 DRLE    1      70.050  77.648  77.272  1.00  0.00            
+ATOM      3  GL1 DRLE    1      74.010  79.258  76.562  1.00  0.00            
+ATOM      4  PL2 DRLE    1      74.810  77.508  79.052  1.00  0.00            
+ATOM      5  C1A DRLE    1      75.500  77.058  73.012  1.00  0.00            
+ATOM      6  D2A DRLE    1      74.200  72.378  72.012  1.00  0.00            
+ATOM      7  C3A DRLE    1      75.330  69.918  75.972  1.00  0.00            
+ATOM      8  C1B DRLE    1      77.200  74.668  77.312  1.00  0.00            
+ATOM      9  D2B DRLE    1      79.220  72.518  73.322  1.00  0.00            
+ATOM     10  C3B DRLE    1      78.020  74.458  69.062  1.00  0.00            
+TER
+ENDMDL

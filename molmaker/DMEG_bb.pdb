@@ -1,0 +1,16 @@
+TITLE     DMEG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DMEG    1      71.420  72.337  74.038  1.00  0.00            
+ATOM      2  PO4 DMEG    1      68.090  71.647  75.608  1.00  0.00            
+ATOM      3  ET1 DMEG    1      69.220  75.547  77.028  1.00  0.00            
+ATOM      4  ET2 DMEG    1      71.390  74.057  78.708  1.00  0.00            
+ATOM      5  C1A DMEG    1      71.940  77.667  74.898  1.00  0.00            
+ATOM      6  C2A DMEG    1      76.830  78.137  73.368  1.00  0.00            
+ATOM      7  C3A DMEG    1      81.630  78.357  72.068  1.00  0.00            
+ATOM      8  C1B DMEG    1      75.220  74.237  76.998  1.00  0.00            
+ATOM      9  C2B DMEG    1      79.890  74.117  74.738  1.00  0.00            
+ATOM     10  C3B DMEG    1      84.370  73.897  72.548  1.00  0.00            
+TER
+ENDMDL

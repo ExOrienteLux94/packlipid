@@ -1,0 +1,16 @@
+TITLE     DULG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DULG    1      74.974  76.628  77.270  1.00  0.00            
+ATOM      2  PO4 DULG    1      73.474  80.038  76.980  1.00  0.00            
+ATOM      3  GL1 DULG    1      70.254  77.688  75.320  1.00  0.00            
+ATOM      4  PL2 DULG    1      71.704  77.898  72.610  1.00  0.00            
+ATOM      5  C1A DULG    1      71.194  74.178  75.760  1.00  0.00            
+ATOM      6  C2A DULG    1      74.354  71.528  75.540  1.00  0.00            
+ATOM      7  C3A DULG    1      78.714  69.188  74.900  1.00  0.00            
+ATOM      8  C1B DULG    1      74.434  75.828  72.730  1.00  0.00            
+ATOM      9  C2B DULG    1      78.234  74.378  73.700  1.00  0.00            
+ATOM     10  C3B DULG    1      82.664  72.648  75.190  1.00  0.00            
+TER
+ENDMDL

@@ -1,0 +1,14 @@
+TITLE     DJES
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  CNO DJES    1      73.430  72.558  72.710  1.00  0.00            
+ATOM      2  PO4 DJES    1      71.400  71.507  75.830  1.00  0.00            
+ATOM      3  ET1 DJES    1      71.980  75.338  77.660  1.00  0.00            
+ATOM      4  ET2 DJES    1      74.610  74.228  78.910  1.00  0.00            
+ATOM      5  C1A DJES    1      73.760  78.088  75.260  1.00  0.00            
+ATOM      6  C2A DJES    1      77.960  79.268  72.520  1.00  0.00            
+ATOM      7  C1B DJES    1      77.540  74.638  75.970  1.00  0.00            
+ATOM      8  C2B DJES    1      79.320  74.378  71.140  1.00  0.00            
+TER
+ENDMDL

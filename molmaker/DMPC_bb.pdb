@@ -1,0 +1,16 @@
+TITLE     DMPC
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NC3 DMPC    1      71.197  78.988  72.716  1.00  0.00            
+ATOM      2  PO4 DMPC    1      69.057  76.078  70.936  1.00  0.00            
+ATOM      3  GL1 DMPC    1      69.007  73.208  74.136  1.00  0.00            
+ATOM      4  GL2 DMPC    1      69.737  75.638  75.976  1.00  0.00            
+ATOM      5  C1A DMPC    1      72.877  71.248  74.736  1.00  0.00            
+ATOM      6  C2A DMPC    1      77.797  71.808  76.136  1.00  0.00            
+ATOM      7  C3A DMPC    1      82.477  72.788  77.536  1.00  0.00            
+ATOM      8  C1B DMPC    1      74.207  76.068  76.126  1.00  0.00            
+ATOM      9  C2B DMPC    1      79.347  76.788  75.966  1.00  0.00            
+ATOM     10  C3B DMPC    1      84.297  77.388  75.736  1.00  0.00            
+TER
+ENDMDL

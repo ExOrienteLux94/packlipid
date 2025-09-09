@@ -1,0 +1,14 @@
+TITLE     DTEC
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NC3 DTEC    1      74.770  71.981  71.839  1.00  0.00            
+ATOM      2  PO4 DTEC    1      71.680  71.621  74.359  1.00  0.00            
+ATOM      3  ET1 DTEC    1      72.140  75.531  75.919  1.00  0.00            
+ATOM      4  ET2 DTEC    1      72.590  76.501  72.979  1.00  0.00            
+ATOM      5  C1A DTEC    1      75.010  76.361  77.559  1.00  0.00            
+ATOM      6  C2A DTEC    1      78.840  77.461  79.139  1.00  0.00            
+ATOM      7  C1B DTEC    1      75.950  76.381  73.149  1.00  0.00            
+ATOM      8  C2B DTEC    1      79.020  74.161  75.059  1.00  0.00            
+TER
+ENDMDL

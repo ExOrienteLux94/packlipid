@@ -1,0 +1,16 @@
+TITLE     DRPS
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  CNO DRPS    1      72.173  76.061  77.294  1.00  0.00            
+ATOM      2  PO4 DRPS    1      69.443  73.591  78.454  1.00  0.00            
+ATOM      3  GL1 DRPS    1      71.443  70.601  76.084  1.00  0.00            
+ATOM      4  GL2 DRPS    1      70.963  72.571  73.704  1.00  0.00            
+ATOM      5  C1A DRPS    1      75.723  71.451  76.404  1.00  0.00            
+ATOM      6  D2A DRPS    1      78.733  75.401  75.984  1.00  0.00            
+ATOM      7  C3A DRPS    1      76.273  79.321  74.644  1.00  0.00            
+ATOM      8  C1B DRPS    1      74.703  74.681  72.394  1.00  0.00            
+ATOM      9  D2B DRPS    1      78.993  76.841  70.954  1.00  0.00            
+ATOM     10  C3B DRPS    1      81.553  79.481  74.084  1.00  0.00            
+TER
+ENDMDL

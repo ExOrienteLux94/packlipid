@@ -1,0 +1,14 @@
+TITLE     DTPE
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NH3 DTPE    1      73.903  75.054  77.963  1.00  0.00            
+ATOM      2  PO4 DTPE    1      70.443  74.324  77.503  1.00  0.00            
+ATOM      3  GL1 DTPE    1      71.823  73.754  73.483  1.00  0.00            
+ATOM      4  GL2 DTPE    1      72.613  76.714  73.483  1.00  0.00            
+ATOM      5  C1A DTPE    1      75.273  72.534  73.613  1.00  0.00            
+ATOM      6  C2A DTPE    1      79.183  72.784  75.263  1.00  0.00            
+ATOM      7  C1B DTPE    1      76.323  77.024  73.923  1.00  0.00            
+ATOM      8  C2B DTPE    1      80.443  77.814  74.773  1.00  0.00            
+TER
+ENDMDL

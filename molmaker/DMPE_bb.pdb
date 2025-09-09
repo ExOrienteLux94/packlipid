@@ -1,0 +1,16 @@
+TITLE     DMPE
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NH3 DMPE    1      71.445  75.480  71.287  1.00  0.00            
+ATOM      2  PO4 DMPE    1      68.585  77.550  71.007  1.00  0.00            
+ATOM      3  GL1 DMPE    1      69.785  78.530  74.957  1.00  0.00            
+ATOM      4  GL2 DMPE    1      72.445  79.570  73.747  1.00  0.00            
+ATOM      5  C1A DMPE    1      71.695  75.300  77.167  1.00  0.00            
+ATOM      6  C2A DMPE    1      75.835  72.350  77.887  1.00  0.00            
+ATOM      7  C3A DMPE    1      79.955  69.590  78.447  1.00  0.00            
+ATOM      8  C1B DMPE    1      75.945  76.830  74.577  1.00  0.00            
+ATOM      9  C2B DMPE    1      80.105  73.800  75.217  1.00  0.00            
+ATOM     10  C3B DMPE    1      84.205  71.000  75.707  1.00  0.00            
+TER
+ENDMDL

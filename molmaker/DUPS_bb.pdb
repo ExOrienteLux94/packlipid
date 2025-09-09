@@ -1,0 +1,16 @@
+TITLE     DUPS
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  CNO DUPS    1      72.629  77.489  74.899  1.00  0.00            
+ATOM      2  PO4 DUPS    1      70.019  75.989  72.459  1.00  0.00            
+ATOM      3  GL1 DUPS    1      70.419  71.859  73.709  1.00  0.00            
+ATOM      4  GL2 DUPS    1      72.719  71.629  71.719  1.00  0.00            
+ATOM      5  C1A DUPS    1      72.659  72.279  76.589  1.00  0.00            
+ATOM      6  C2A DUPS    1      76.049  74.009  78.199  1.00  0.00            
+ATOM      7  C3A DUPS    1      80.229  76.499  79.279  1.00  0.00            
+ATOM      8  C1B DUPS    1      75.549  73.579  73.159  1.00  0.00            
+ATOM      9  C2B DUPS    1      78.329  76.499  74.289  1.00  0.00            
+ATOM     10  C3B DUPS    1      81.399  80.169  75.699  1.00  0.00            
+TER
+ENDMDL

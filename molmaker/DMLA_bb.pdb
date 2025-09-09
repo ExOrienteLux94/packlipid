@@ -1,0 +1,15 @@
+TITLE     DMLA
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  PO4 DMLA    1      70.871  68.600  72.390  1.00  0.00            
+ATOM      2  GL1 DMLA    1      70.541  72.940  72.210  1.00  0.00            
+ATOM      3  PL2 DMLA    1      72.011  72.740  69.470  1.00  0.00            
+ATOM      4  C1A DMLA    1      72.871  75.350  75.190  1.00  0.00            
+ATOM      5  C2A DMLA    1      75.611  78.140  78.620  1.00  0.00            
+ATOM      6  C3A DMLA    1      78.251  80.840  81.870  1.00  0.00            
+ATOM      7  C1B DMLA    1      75.631  73.740  71.090  1.00  0.00            
+ATOM      8  C2B DMLA    1      78.401  75.470  75.070  1.00  0.00            
+ATOM      9  C3B DMLA    1      80.811  77.180  79.090  1.00  0.00            
+TER
+ENDMDL

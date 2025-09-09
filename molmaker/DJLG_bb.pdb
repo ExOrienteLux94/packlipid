@@ -1,0 +1,14 @@
+TITLE     DJLG
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  GL0 DJLG    1      72.836  73.988  77.290  1.00  0.00            
+ATOM      2  PO4 DJLG    1      69.886  72.738  75.330  1.00  0.00            
+ATOM      3  GL1 DJLG    1      72.866  73.718  72.400  1.00  0.00            
+ATOM      4  PL2 DJLG    1      74.296  71.088  73.260  1.00  0.00            
+ATOM      5  C1A DJLG    1      75.276  77.258  73.740  1.00  0.00            
+ATOM      6  C2A DJLG    1      77.886  81.468  75.290  1.00  0.00            
+ATOM      7  C1B DJLG    1      77.406  72.788  75.290  1.00  0.00            
+ATOM      8  C2B DJLG    1      79.546  76.958  77.400  1.00  0.00            
+TER
+ENDMDL

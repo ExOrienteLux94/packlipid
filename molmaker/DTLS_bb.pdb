@@ -1,0 +1,14 @@
+TITLE     DTLS
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  CNO DTLS    1      72.816  70.919  75.376  1.00  0.00            
+ATOM      2  PO4 DTLS    1      70.626  73.819  74.066  1.00  0.00            
+ATOM      3  GL1 DTLS    1      73.596  76.479  72.506  1.00  0.00            
+ATOM      4  PL2 DTLS    1      75.116  73.939  71.496  1.00  0.00            
+ATOM      5  C1A DTLS    1      75.686  77.859  75.266  1.00  0.00            
+ATOM      6  C2A DTLS    1      78.206  79.249  78.426  1.00  0.00            
+ATOM      7  C1B DTLS    1      76.946  73.589  74.326  1.00  0.00            
+ATOM      8  C2B DTLS    1      77.006  74.149  78.536  1.00  0.00            
+TER
+ENDMDL

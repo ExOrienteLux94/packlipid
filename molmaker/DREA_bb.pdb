@@ -1,0 +1,15 @@
+TITLE     DREA
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  PO4 DREA    1      69.360  72.891  78.820  1.00  0.00            
+ATOM      2  ET1 DREA    1      72.900  75.331  78.230  1.00  0.00            
+ATOM      3  ET2 DREA    1      71.290  76.761  75.950  1.00  0.00            
+ATOM      4  C1A DREA    1      76.420  74.241  76.400  1.00  0.00            
+ATOM      5  D2A DREA    1      77.290  73.061  71.680  1.00  0.00            
+ATOM      6  C3A DREA    1      72.540  73.261  72.580  1.00  0.00            
+ATOM      7  C1B DREA    1      74.390  78.011  73.580  1.00  0.00            
+ATOM      8  D2B DREA    1      79.320  77.671  72.950  1.00  0.00            
+ATOM      9  C3B DREA    1      81.490  73.771  74.810  1.00  0.00            
+TER
+ENDMDL

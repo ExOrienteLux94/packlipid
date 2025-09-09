@@ -1,0 +1,14 @@
+TITLE     DJLE
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NH3 DJLE    1      74.803  74.360  78.867  1.00  0.00            
+ATOM      2  PO4 DJLE    1      71.342  73.660  79.177  1.00  0.00            
+ATOM      3  GL1 DJLE    1      71.543  75.150  75.197  1.00  0.00            
+ATOM      4  PL2 DJLE    1      72.323  77.900  76.437  1.00  0.00            
+ATOM      5  C1A DJLE    1      74.993  73.470  72.887  1.00  0.00            
+ATOM      6  C2A DJLE    1      78.903  71.310  70.277  1.00  0.00            
+ATOM      7  C1B DJLE    1      76.073  78.150  74.827  1.00  0.00            
+ATOM      8  C2B DJLE    1      80.023  76.000  72.327  1.00  0.00            
+TER
+ENDMDL

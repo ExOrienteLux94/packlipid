@@ -1,0 +1,15 @@
+TITLE     DRLA
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  PO4 DRLA    1      70.449  68.708  77.104  1.00  0.00            
+ATOM      2  GL1 DRLA    1      74.269  70.228  75.654  1.00  0.00            
+ATOM      3  PL2 DRLA    1      75.069  70.418  78.664  1.00  0.00            
+ATOM      4  C1A DRLA    1      74.299  74.218  73.594  1.00  0.00            
+ATOM      5  D2A DRLA    1      73.399  78.838  71.844  1.00  0.00            
+ATOM      6  C3A DRLA    1      76.719  82.328  72.174  1.00  0.00            
+ATOM      7  C1B DRLA    1      75.739  74.438  78.584  1.00  0.00            
+ATOM      8  D2B DRLA    1      76.729  78.518  75.884  1.00  0.00            
+ATOM      9  C3B DRLA    1      78.329  77.308  71.494  1.00  0.00            
+TER
+ENDMDL

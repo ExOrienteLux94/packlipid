@@ -1,0 +1,16 @@
+TITLE     DUPE
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  150.000  150.000  150.000  90.00  90.00  90.00 P 1           1
+MODEL        1
+ATOM      1  NH3 DUPE    1      71.490  74.308  73.448  1.00  0.00            
+ATOM      2  PO4 DUPE    1      68.340  73.778  75.018  1.00  0.00            
+ATOM      3  GL1 DUPE    1      70.800  73.928  78.518  1.00  0.00            
+ATOM      4  GL2 DUPE    1      71.520  76.798  77.708  1.00  0.00            
+ATOM      5  C1A DUPE    1      74.080  72.578  77.638  1.00  0.00            
+ATOM      6  C2A DUPE    1      77.150  72.598  74.858  1.00  0.00            
+ATOM      7  C3A DUPE    1      80.590  73.378  71.338  1.00  0.00            
+ATOM      8  C1B DUPE    1      74.910  76.928  76.128  1.00  0.00            
+ATOM      9  C2B DUPE    1      78.440  77.508  73.938  1.00  0.00            
+ATOM     10  C3B DUPE    1      82.680  78.198  71.408  1.00  0.00            
+TER
+ENDMDL
