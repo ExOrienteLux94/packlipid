@@ -517,7 +517,9 @@ def main():
     args = parser.parse_args()
 
     cwd = os.getcwd()
+    test = True
     #
+    packlipids_dir = os.path.dirname(os.path.realpath(sys.argv[0])) # directory where packlipids is installed
 
     comp_from_csv = True
     if args.lipids != None and args.nupper != None and args.nlower != None:
@@ -567,10 +569,7 @@ def main():
     top_file = args.top
     prot_itps = args.pitp
 
-    
-
     rescale_box = True
-
 
     d_water = args.dsol # water layer above and below membrane [Å]
 
@@ -657,7 +656,7 @@ def main():
 
 
         itp_list = []
-        itp_dir = '/worktmp/scd287/daily/martini3/lipids/'
+        itp_dir = packlipids_dir + '/data/martini3/lipids/'
         # figure out which lipid its are needed
         for lipid in merged['lipid']:
             suffix = lipid[-2:]

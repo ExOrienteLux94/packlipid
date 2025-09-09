@@ -1,0 +1,13 @@
+TITLE     single lipid
+MODEL        1
+ATOM      1  PO4 DREA    1      -3.600  -2.610  12.810  1.00  0.00            
+ATOM      2  ET1 DREA    1      -2.240  -1.800   6.620  1.00  0.00            
+ATOM      3  ET2 DREA    1       0.020  -0.480   6.040  1.00  0.00            
+ATOM      4  C1A DREA    1      -2.860  -2.130   1.610  1.00  0.00            
+ATOM      5  D2A DREA    1      -3.460  -1.280  -4.040  1.00  0.00            
+ATOM      6  C3A DREA    1      -3.680  -0.970  -9.730  1.00  0.00            
+ATOM      7  C1B DREA    1       2.510   1.520   0.630  1.00  0.00            
+ATOM      8  D2B DREA    1       5.270   3.380  -4.560  1.00  0.00            
+ATOM      9  C3B DREA    1       8.080   4.360  -9.390  1.00  0.00            
+TER
+ENDMDL

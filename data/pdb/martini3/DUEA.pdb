@@ -1,0 +1,13 @@
+TITLE     single lipid
+MODEL        1
+ATOM      1  PO4 DUEA    1       3.260  -1.910  12.050  1.00  0.00            
+ATOM      2  ET1 DUEA    1       2.110  -1.840   6.040  1.00  0.00            
+ATOM      3  ET2 DUEA    1       0.130   0.880   4.850  1.00  0.00            
+ATOM      4  C1A DUEA    1       2.250  -1.880   2.060  1.00  0.00            
+ATOM      5  C2A DUEA    1       1.710  -3.060  -2.600  1.00  0.00            
+ATOM      6  C3A DUEA    1       1.530  -3.000  -8.410  1.00  0.00            
+ATOM      7  C1B DUEA    1      -1.370   1.770   0.390  1.00  0.00            
+ATOM      8  C2B DUEA    1      -3.720   3.180  -4.420  1.00  0.00            
+ATOM      9  C3B DUEA    1      -5.920   5.860  -9.990  1.00  0.00            
+TER
+ENDMDL

@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: scd287 (410432)
 ;	On host: tuhkakyyhky.lin.tuni.fi
-;	At date: Tue Sep  9 12:53:49 2025
+;	At date: Tue Sep  9 13:38:06 2025
 ;
 ;	Created by:
 ;	                     :-) GROMACS - gmx grompp, 2025.1 (-:
@@ -11,7 +11,7 @@
 ;	Data prefix:  /worktmp/scd287/gromacs-2025.1
 ;	Working dir:  /opt/tuni/worktmp/scd287/daily/packlipid/molmaker
 ;	Command line:
-;	  gmx grompp -f pull.mdp -c DVPC_bb.gro -n DVPC.ndx -p DVPC.top -o DVPC_pull.tpr
+;	  gmx grompp -f pull.mdp -c YOPS_bb.gro -n YOPS.ndx -p YOPS.top -o YOPS_pull.tpr
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.

@@ -1,0 +1,12 @@
+TITLE     single lipid
+MODEL        1
+ATOM      1  NH3 DJPE    1      -2.220  -0.880  -9.630  1.00  0.00            
+ATOM      2  PO4 DJPE    1      -0.220  -3.300  -9.680  1.00  0.00            
+ATOM      3  GL1 DJPE    1      -0.080  -2.450  -2.770  1.00  0.00            
+ATOM      4  GL2 DJPE    1       0.020   1.040  -2.350  1.00  0.00            
+ATOM      5  C1A DJPE    1       0.590  -3.190   2.840  1.00  0.00            
+ATOM      6  C2A DJPE    1       1.280  -2.720   9.280  1.00  0.00            
+ATOM      7  C1B DJPE    1      -0.260   4.110   3.450  1.00  0.00            
+ATOM      8  C2B DJPE    1       0.900   7.400   8.890  1.00  0.00            
+TER
+ENDMDL

@@ -1,0 +1,12 @@
+TITLE     single lipid
+MODEL        1
+ATOM      1  CNO DJPS    1       1.460  -3.550 -12.520  1.00  0.00            
+ATOM      2  PO4 DJPS    1      -0.080  -2.180  -9.480  1.00  0.00            
+ATOM      3  GL1 DJPS    1      -0.860  -2.510  -2.610  1.00  0.00            
+ATOM      4  GL2 DJPS    1       0.420   1.260  -1.780  1.00  0.00            
+ATOM      5  C1A DJPS    1      -0.190  -1.790   3.030  1.00  0.00            
+ATOM      6  C2A DJPS    1      -0.230  -1.020   8.890  1.00  0.00            
+ATOM      7  C1B DJPS    1      -0.440   3.740   4.450  1.00  0.00            
+ATOM      8  C2B DJPS    1      -0.050   6.070  10.050  1.00  0.00            
+TER
+ENDMDL

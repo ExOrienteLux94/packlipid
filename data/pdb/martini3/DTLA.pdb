@@ -1,0 +1,11 @@
+TITLE     single lipid
+MODEL        1
+ATOM      1  PO4 DTLA    1       2.080   0.470  10.760  1.00  0.00            
+ATOM      2  GL1 DTLA    1       2.120  -0.020   3.230  1.00  0.00            
+ATOM      3  PL2 DTLA    1      -0.850  -0.470   2.230  1.00  0.00            
+ATOM      4  C1A DTLA    1       1.930  -0.150  -1.170  1.00  0.00            
+ATOM      5  C2A DTLA    1       1.930   0.130  -6.510  1.00  0.00            
+ATOM      6  C1B DTLA    1      -2.640   0.220  -1.840  1.00  0.00            
+ATOM      7  C2B DTLA    1      -4.570  -0.210  -6.730  1.00  0.00            
+TER
+ENDMDL
