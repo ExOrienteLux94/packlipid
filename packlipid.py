@@ -314,6 +314,7 @@ def center_pdb(input_pdb, output_pdb, box_size):
     masses = []
     lines = []
 
+
     # Parse coordinates + elements
     with open(input_pdb, "r") as f:
         for line in f:
@@ -566,7 +567,6 @@ def main():
     packmol_out = args.out
     comp_in = args.comp
     protein_pdb = args.prot
-    centered_out_pdb = 'protein_center.pdb'
     #protein_pdb = 'AF-P11166-F1-model_v4.pdb'
     water_pdb = args.sol
 
@@ -602,6 +602,7 @@ def main():
     prot_itps = args.pitp
 
     rescale_box = True
+    center = True # center protein in box
 
     d_water = args.dsol # water layer above and below membrane [Å]
 
@@ -621,12 +622,13 @@ def main():
         dirname = base_dirname
 
         i = 1
-        while os.path.exists(dirname):
+        while os.path.exists(dirname) and overwrite == False:
             dirname = f"{base_dirname}_{i}"
             i += 1
 
         os.makedirs(dirname)
-        print(f"Created output directory: {os.path.join(cwd, dirname)}")
+        output_dir = os.path.join(cwd, dirname)
+        print(f"Created output directory: {output_dir}")
 
         # copy input files to output directory
         if comp_in != None:
@@ -656,13 +658,14 @@ def main():
             })
 
         # Load areas CSV
-        areas = pd.read_csv('areas.csv', delimiter=delim)
+        areas_csv = packlipids_dir + '/data/areas.csv'
+        areas = pd.read_csv(areas_csv, delimiter=delim)
 
         #os.chdir(os.path.join(cwd, dirname))
         #cwd = os.getcwd()
 
         # Merge on lipid name
-        merged = composition.merge(areas, left_on='lipid', right_on='lipid')
+        merged = pd.merge(composition, areas, how="left", on="lipid")
         merged["area"]   = merged["area"].fillna(60) # fill out missing areas
 
         #check for NaN values in charge
@@ -679,7 +682,7 @@ def main():
                     charges_from_itp.append(net_charge_from_itp(ln_itp))
                 else:
                     # append with default values
-                    charges_from_itp.append(0.0)
+                    charges_from_itp.append(0)
             merged.loc[merged["charge"].isna(), "charge"] = charges_from_itp
 
         # Calculate total leaflet areas
@@ -774,10 +777,9 @@ def main():
             diff_xy = np.abs(prot_coords[0:-1,1] - prot_coords[0:-1,0])
             r_cylider = np.max(diff_xy) * 0.525
             h_cylider = np.abs(prot_coords[-1,1] - prot_coords[-1,0]) * 1.05
-            if (h_cylider * 1.5) > (d_water*2 + d_bilayer): 
-                z = h_cylider * 1.5
-            # estimate protein crosssectional area
-            if np.max(diff_xy) > xy_length and rescale_box == True:
+            if (h_cylider + 40) > z: 
+                z = h_cylider +40
+            if np.max(diff_xy) > xy_length and rescale_box == True and n_protein == 1:
                 # scale mebrane components
                 print("!!!!!!!!!!!!!!!!!!!!!!!")  
                 print("Initial bilayer dimensions are too small to fit imbedded protein structure with minimum immage convention.")
@@ -786,18 +788,21 @@ def main():
                 xy_length = np.max(diff_xy) * 1.8
 
             # center protein in box 
-            center_pdb(protein_pdb, centered_out_pdb, (xy_length, xy_length, z))
+            if center:
+                centered_out_pdb = output_dir + '/protein_center.pdb'
+                center_pdb(protein_pdb, centered_out_pdb, (xy_length, xy_length, z))
             # estimate protein crosssectional area
             cros_prot_coords, cros_prot_ndxs = find_extreme_coords(centered_out_pdb, np.array([z/2 - d_bilayer/2, z/2 + d_bilayer/2]))
             
             cross_diff_xy = np.abs(cros_prot_coords[0:-1,1] - cros_prot_coords[0:-1,0])
             prot_area = (cross_diff_xy [0]*0.5) * (cross_diff_xy [1]*0.5) * np.pi * n_protein
 
-            if protein_insert_method == 'scale':                   
+            if protein_insert_method == 'replace' and n_protein > 1:  
+                ## NOT COMPLETE YET!!!!!                 
                 xy_length = (avg_leaflet_area + prot_area) ** 0.5
                 print(f"After adding {n_protein} protein(s), Box XY dimensions are: {xy_length:.2f} x {xy_length:.2f} Å")
 
-            elif protein_insert_method == 'replace':
+            elif protein_insert_method == 'replace' and n_protein == 1:
                 # make sure protein fits in box, if not, resize membrane
                 if rescale_box == True:
                     area_lipid_new = xy_length ** 2 - prot_area
@@ -848,6 +853,7 @@ def main():
         
         z_center = z / 2        
 
+        packmol_out = output_dir + '/'+ packmol_out
         with open(packmol_out, 'w') as f:
             f.write("tolerance 5.0\n")
             f.write(f"filetype {struct_out_type}\n")
@@ -972,6 +978,7 @@ def main():
 
         if write_topol:
             print(lipid_itps)
+            top_file = output_dir + '/' + top_file
             write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, dimer_bool= dimer, protein_itp=prot_itps, lipid_itp = lipid_itps)
     except SystemExit:
         print("Program execution terminated!")
