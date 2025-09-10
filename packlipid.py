@@ -524,8 +524,9 @@ def main():
     arg_group_general.add_argument("-sol", "--sol", type=str, default=None, help='name of solvent molecule strcture file (default: %(default)s)')
     arg_group_general.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structure file to read gro or pdb (default: %(default)s)')
     arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of output structure file (default: %(default)s)')
+    arg_group_general.add_argument("-outdir", "--outdir", type =str, default=None, help='name of output directory (default: run_yyyy-mm-dd-hhmm)')
+    arg_group_general.add_argument("-append", "--append", type =str, choices=['yes', 'no'], default='no', help='append to directory if directory exists (default: %(default)s')
     arg_group_general.add_argument("-delim", "--delim", type =str, default=';', help='delimiter used in .csv file (default: %(default)s)')
-    arg_group_general.add_argument("-delim", "--delim", type =str, default=None, help='delimiter used in .csv file (default: %(default)s)')
     arg_group_general.add_argument("-ff", "--ff", type=str, choices=['martini2', 'martini3'], default='martini3', help=' (default: %(default)s)')
 
 
@@ -533,15 +534,15 @@ def main():
     arg_group_utility.add_argument("-lipids", "--lipids", nargs='*', type = str, default=None, help='Name(s) of lipids constituting the membrane when not reading composition from .csv, order must match --nupper and --nlower (default: %(default)s)')
     arg_group_utility.add_argument("-nupper", "--nupper", nargs='*', type = int, default=None, help='Number of lipids constituting the membrane when not reading composition from .csv, order must match --lipids (default: %(default)s)')
     arg_group_utility.add_argument("-nlower", "--nlower", nargs='*', type = int, default=None, help='Number of lipids constituting the membrane when not reading composition from .csv, order must match --lipids (default: %(default)s)')
-    arg_group_utility.add_argument("-solvate", "--solvate", type=str, default='no', help='solvate created strcutre with solvent yes/no (default: %(default)s)')
+    arg_group_utility.add_argument("-solvate", "--solvate", type=str, choices=['yes', 'no'], default='no', help='solvate created strcutre with solvent yes/no (default: %(default)s)')
     arg_group_utility.add_argument("-dsol", "--dsol", type=float, default=20, help='height of water layer above and below the bilayer [Å] (default: %(default)s)')
     arg_group_utility.add_argument("-neutral", "--neutral", type=str, default='no', help='add ions (Na+/Cl-) to neutralize system net charge to 0 yes/no (default: %(default)s)')
 
     # protein insert arguments
     arg_group_protein.add_argument("-prot", "--prot",type=str, default = None, help='name of protein struture file (default: %(default)s)')
-    arg_group_protein.add_argument("-proteins", "--proteins", type=str, default='no', help='inbed protein structures in bilayer yes/no (default: %(default)s)')
-    arg_group_protein.add_argument("-dimer", "--dimer", type=str, default='no', help='protein .pdb file contains a dimer yes/no (default: %(default)s)')
-    arg_group_protein.add_argument("-orient", "--orient", type=str, default='no', help='reorient protein structure with respect to bilayer yes/no (default: %(default)s)')
+    arg_group_protein.add_argument("-proteins", "--proteins", type=str, choices=['yes', 'no'], default='no', help='inbed protein structures in bilayer yes/no (default: %(default)s)')
+    arg_group_protein.add_argument("-dimer", "--dimer", type=str, choices=['yes', 'no'], default='no', help='protein .pdb file contains a dimer yes/no (default: %(default)s)')
+    arg_group_protein.add_argument("-orient", "--orient", type=str, choices=['yes', 'no'], default='no', help='reorient protein structure with respect to bilayer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
     arg_group_protein.add_argument("-method", "--method", choices=['replace', 'scale'], default='replace', help='method for inserting protein structure in bilayer, options: %(choices)s (default: %(default)s)')
     arg_group_protein.add_argument("-dstr", "--dstr", choices=['grid', 'polygon', 'random'], default='grid', help='method for distributing protein structures in bilayer, options: %(choices)s (default: %(default)s)')
@@ -611,6 +612,11 @@ def main():
     try:
         # Create output directory
         outdir_name = args.outdir
+        
+        if args.append == 'yes':
+            append_dir = True  # include neutralizing ions
+        else:
+            append_dir = False
 
         if outdir_name != None:
             base_dirname = outdir_name
@@ -620,15 +626,26 @@ def main():
             base_dirname = f"run_{timestamp}"
         
         dirname = base_dirname
+        direxists = os.path.exists(dirname)
+        if direxists == True and append_dir == False:
+            i = 1
+            while os.path.exists(dirname):
+                dirname = f"{base_dirname}_{i}"
+                i += 1
 
-        i = 1
-        while os.path.exists(dirname) and overwrite == False:
-            dirname = f"{base_dirname}_{i}"
-            i += 1
+            os.makedirs(dirname)
+            output_dir = os.path.join(cwd, dirname)
+            print(f"Created output directory: {output_dir}")
+        elif direxists == True and append_dir == True:
+            output_dir = os.path.join(cwd, dirname)
+            print(f"Appending to output directory: {output_dir}")
+        else:
+            os.makedirs(dirname)
+            output_dir = os.path.join(cwd, dirname)
+            print(f"Created output directory: {output_dir}")
 
         os.makedirs(dirname)
-        output_dir = os.path.join(cwd, dirname)
-        print(f"Created output directory: {output_dir}")
+        
 
         # copy input files to output directory
         if comp_in != None:
