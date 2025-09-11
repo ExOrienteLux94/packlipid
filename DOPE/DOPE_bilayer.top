@@ -20,7 +20,7 @@
 #endif
 
 [ system ]
-bilayer system
+bilayer system in water
 
 [ molecules ]
 ; Compound        #mols
@@ -28,3 +28,4 @@ PROA           1
 PROB           1
 DOPE           500
 DOPE           500
+W               28313

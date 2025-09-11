@@ -1,4 +1,4 @@
-define                   = -DFLEXIBLE -DNORMANG
+define                   = -DPOSRSTR
 integrator               = steep
 tinit                    = 0.0
 nsteps                   = 5000
@@ -22,9 +22,9 @@ vdw-modifier             = Potential-shift-verlet
 rvdw                     = 1.1
 
 tcoupl                   = v-rescale
-tc-grps                  = membrane solute
-tau_t                    = 1.0  1.0
-ref_t                    = 303.15 303.15
+tc-grps                  = Protein MEMB W
+tau_t                    = 1.0 1.0 1.0
+ref_t                    = 310.15 310.15
 
 ; Pressure coupling:
 Pcoupl                   = berendsen

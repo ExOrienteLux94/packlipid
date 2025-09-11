@@ -413,6 +413,7 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
         # Header
         f.write("; Generated Martini topology\n")
         f.write('#include "'+packlipids_dir+'/data/ffs/martini3/lipids/martini_v3.0.0.itp"\n\n')
+        f.write('#include "'+packlipids_dir+'/data/ffs/martini3/lipids/martini_v3.0.0_ffbonded_v2.itp"\n\n')
         for litp in lipid_itp:
             f.write('#include "'+litp +'"\n')
         f.write('\n')
