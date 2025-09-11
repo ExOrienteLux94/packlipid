@@ -1,0 +1,30 @@
+; Generated Martini topology
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/lipids/martini_v3.0.0.itp"
+
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/lipids/martini_v3.0.0_phospholipids_PE_v2.itp"
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/lipids/martini_v3.0.0_etherphospholipids_PE_v2.itp"
+
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/martini_v3.0.0_ions_v1.itp"
+
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/martini_v3.0.0_solvents_v1.itp"
+
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"
+
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/example/6qm9_proa.itp"
+#include "/opt/tuni/worktmp/scd287/daily/packlipid/data/example/6qm9_prob.itp"
+
+#ifdef POSRSTR
+#include “posrstr.itp”
+#endif
+
+[ system ]
+bilayer system
+
+[ molecules ]
+; Compound        #mols
+PROA           1
+PROB           1
+DOPE           500
+DOPE           500

@@ -5,6 +5,7 @@ import sys
 import argparse
 from datetime import datetime
 import os
+from pathlib import Path
 import glob
 import shutil
 
@@ -386,7 +387,7 @@ def get_molnames(itp_file, target=None):
                 j += 1
     return molnames
 
-def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, dimer_bool = False, protein_bool = False):
+def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, dimer_bool = False, protein_bool = False, posre = True, posre_f = 'posrstr.itp', packlipids_dir = '.'):
     """
     Write a Martini .top file given a dataframe of lipid composition (upper/lower leaflet)
     and net system charge.
@@ -411,22 +412,28 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
     with open(top_file, "w") as f:
         # Header
         f.write("; Generated Martini topology\n")
-        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0.itp"\n\n')
+        f.write('#include "'+packlipids_dir+'/data/ffs/martini3/lipids/martini_v3.0.0.itp"\n\n')
         for litp in lipid_itp:
-            f.write('#include "/worktmp/scd287/daily/martini3/lipids/'+ litp +'"\n')
+            f.write('#include "'+litp +'"\n')
         f.write('\n')
-        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_ions_v1.itp"\n\n')
-        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_solvents_v1.itp"\n\n')
+        f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_ions_v1.itp"\n\n')
+        f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_solvents_v1.itp"\n\n')
 
         if protein_bool:
-            f.write('#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"\n')
-            f.write('#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"\n')
-            f.write('#include "/worktmp/scd287/daily/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"\n\n')
+            f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"\n')
+            f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"\n')
+            f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"\n\n')
             for prot in protein_itp:
                 f.write('#include "' + prot +'"\n')
             f.write('\n')
         else:
             f.write('\n')
+
+        # include option for position restrains
+        if posre and protein_bool:
+            f.write('#ifdef POSRSTR\n')
+            f.write('#include “'+posre_f+'”\n')
+            f.write('#endif\n\n')
 
         # System section
         f.write("[ system ]\n")
@@ -443,8 +450,11 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
                 else:
                     f.write(f"{mol_name:<15}{n_prot}\n")
         for _, row in df.iterrows():
-            total_count = int(row["upper"]) + int(row["lower"])
-            f.write(f"{row['lipid']:<15}{total_count}\n")
+            #total_count = int(row["upper"]) + int(row["lower"])
+            nupper = int(row["upper"])
+            nlower = int(row["lower"])
+            f.write(f"{row['lipid']:<15}{nupper}\n")
+            f.write(f"{row['lipid']:<15}{nlower}\n")
         for ion, count in ions.items():
             f.write(f"{ion:<15}{count}\n")
 
@@ -540,7 +550,6 @@ def main():
 
     # protein insert arguments
     arg_group_protein.add_argument("-prot", "--prot",type=str, default = None, help='name of protein struture file (default: %(default)s)')
-    arg_group_protein.add_argument("-proteins", "--proteins", type=str, choices=['yes', 'no'], default='no', help='inbed protein structures in bilayer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-dimer", "--dimer", type=str, choices=['yes', 'no'], default='no', help='protein .pdb file contains a dimer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-orient", "--orient", type=str, choices=['yes', 'no'], default='no', help='reorient protein structure with respect to bilayer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
@@ -572,7 +581,7 @@ def main():
     water_pdb = args.sol
 
     pbc = True
-    if args.proteins == 'yes':
+    if args.prot != None:
         protein = True  # embed protein to bilayer
     else:
         protein = False
@@ -601,6 +610,12 @@ def main():
     write_topol = True
     top_file = args.top
     prot_itps = args.pitp
+
+    # absolute paths fro prot_itps
+    prot_itp_paths = []
+    for itp in prot_itps:
+        prot_itp_paths.append(str(Path(itp).resolve()))
+    
 
     rescale_box = True
     center = True # center protein in box
@@ -644,15 +659,13 @@ def main():
             output_dir = os.path.join(cwd, dirname)
             print(f"Created output directory: {output_dir}")
 
-        os.makedirs(dirname)
         
 
         # copy input files to output directory
         if comp_in != None:
-            files_to_copy = [comp_in, protein_pdb] + prot_itps
+            files_to_copy = [comp_in, protein_pdb] + prot_itp_paths
         else:
-            files_to_copy = [protein_pdb] + prot_itps
-        #print(files_to_copy)
+            files_to_copy = [protein_pdb] + prot_itp_paths
         for src_file in files_to_copy:
             if os.path.exists(src_file):
                 dst_file = os.path.join(dirname, os.path.basename(src_file))
@@ -774,9 +787,9 @@ def main():
             lipid = row['lipid']
             nr = int(row['upper']) + int(row['lower'])
             if ffield == 'martini3':
-                ll_pdb_file = f"../pdb/martini3/{lipid}.pdb"
+                ll_pdb_file = packlipids_dir + f"/data/pdb/martini3/{lipid}.pdb"
             elif ffield =='martini2':
-                ll_pdb_file = f"../pdb/martini2/{lipid}-em.pdb"
+                ll_pdb_file = packlipids_dir + f"/data/pdb/martini2/{lipid}-em.pdb"
             ll = average_lipid_length(ll_pdb_file)
             if ll != None:
                 lipid_lengths.append(ll*nr)
@@ -796,13 +809,13 @@ def main():
             h_cylider = np.abs(prot_coords[-1,1] - prot_coords[-1,0]) * 1.05
             if (h_cylider + 40) > z: 
                 z = h_cylider +40
-            if np.max(diff_xy) > xy_length and rescale_box == True and n_protein == 1:
+            if np.max(diff_xy) + 60 > xy_length and rescale_box == True and n_protein == 1:
                 # scale mebrane components
                 print("!!!!!!!!!!!!!!!!!!!!!!!")  
                 print("Initial bilayer dimensions are too small to fit imbedded protein structure with minimum immage convention.")
                 print("Rescaling box size to fit protein in membrane.")
                 xy_length_old = xy_length 
-                xy_length = np.max(diff_xy) * 1.8
+                xy_length = np.max(diff_xy) + 60
 
             # center protein in box 
             if center:
@@ -924,7 +937,10 @@ def main():
                 lipid = row['lipid']
                 upper = int(row['upper'])
                 lower = int(row['lower'])
-                pdb_file = f"../pdb/{lipid}-em.pdb"
+                if ffield == 'martini2':
+                    pdb_file = packlipids_dir + f"/data/pdb/martini2/{lipid}-em.pdb"
+                elif ffield == 'martini3':
+                    pdb_file = packlipids_dir + f"/data/pdb/martini3/{lipid}.pdb"
 
                 info = find_tail_atoms(pdb_file)
                 first = info['first_atom']
@@ -994,9 +1010,9 @@ def main():
         print("PACKMOL input generated with updated box size and bilayer charge calculated.")
 
         if write_topol:
-            print(lipid_itps)
+            #print(lipid_itps)
             top_file = output_dir + '/' + top_file
-            write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, dimer_bool= dimer, protein_itp=prot_itps, lipid_itp = lipid_itps)
+            write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, dimer_bool= dimer, protein_itp=prot_itp_paths, lipid_itp = itp_list, packlipids_dir = packlipids_dir)
     except SystemExit:
         print("Program execution terminated!")
 
