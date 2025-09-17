@@ -871,10 +871,7 @@ def main():
             protein_charges = 0
             for itp in prot_itp_paths:
                 protein_charges += net_charge_from_itp(itp)
-            if dimer:
-                total_charge += protein_charges * (n_protein/2)
-            else:
-                total_charge += protein_charges * n_protein
+            total_charge += protein_charges * n_protein
 
 
             if n_protein == 1:
@@ -1068,3 +1065,5 @@ main()
 # gmx grompp -f minim1.mdp -c out.gro -p DOPE_bilayer.top -n index.ndx -r out.gro -o minim1.tpr -maxwarn 1
 
 # python packlipid.py -top DOPE_bilayer.top -pitp ./data/example/6qm9_proa.itp ./data/example/6qm9_prob.itp -out DOPE_bilayer.inp -out DOPE_bilayer.inp -outdir DOPE -append yes -ff martini3 -delim , -lipids DOPE -nupper 100 -nlower 100 -prot ./data/example/prot.pdb -dimer yes -nprotein 1 -solvate yes
+
+# for file in ./data/pdb/martini3/*.pdb; do python packlipid.py -top "$(basename "$file" .pdb)_bilayer.top" -pitp ./data/example/6qm9_proa.itp ./data/example/6qm9_prob.itp -out "$(basename "$file" .pdb)_bilayer.inp" -outdir TMEM16B_dimer -append yes -ff martini3 -delim , -lipids "$(basename "$file" .pdb)" -nupper 100 -nlower 100 -prot ./data/example/prot.pdb -dimer yes -nprotein 1 -solvate yes -dsol 50 -pref "$(basename "$file" .pdb)"; done
