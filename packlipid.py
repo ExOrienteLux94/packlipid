@@ -774,6 +774,7 @@ def main():
                     for fn in lipid_itps:
                         print(itp_dir)
                         print(fn)
+                        print(get_molnames(fn, target=str(lipid)))
                         if lipid in get_molnames(fn, target=str(lipid)):
                             itp_list.append(fn)
                             break
