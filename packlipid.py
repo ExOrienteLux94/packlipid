@@ -382,7 +382,7 @@ def get_molnames(itp_file, target=None):
                 if candidate and not candidate.startswith(";") and not candidate.startswith("["):
                     name = candidate.split()[0]
                     if target is None or name == target:
-                        molnames.append((j+1, name))  # store line number and name
+                        molnames.append(name)  # store line number and name
                     break
                 j += 1
     return molnames
