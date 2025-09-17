@@ -387,7 +387,7 @@ def get_molnames(itp_file, target=None):
                 j += 1
     return molnames
 
-def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, dimer_bool = False, protein_bool = False, posre = True, posre_f = 'posrstr.itp', packlipids_dir = '.'):
+def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, n_water = 0, dimer_bool = False, protein_bool = False, posre = True, posre_f = 'posrstr.itp', packlipids_dir = '.'):
     """
     Write a Martini .top file given a dataframe of lipid composition (upper/lower leaflet)
     and net system charge.
@@ -405,9 +405,9 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
     # Determine ions required for neutralization
     ions = {}
     if total_charge > 0:
-        ions["CL-"] = total_charge
+        ions["CL"] = total_charge
     elif total_charge < 0:
-        ions["NA+"] = -total_charge
+        ions["NA"] = -total_charge
 
     with open(top_file, "w") as f:
         # Header
@@ -421,20 +421,20 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
         f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_solvents_v1.itp"\n\n')
 
         if protein_bool:
-            f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"\n')
-            f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"\n')
-            f.write('#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"\n\n')
+            f.write(';#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"\n')
+            f.write(';#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"\n')
+            f.write(';#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"\n\n')
             for prot in protein_itp:
                 f.write('#include "' + prot +'"\n')
+                if posre and protein_bool:
+                    f.write('#ifdef POSRSTR\n')
+                    f.write('#include "'+posre_f+'"\n')
+                    f.write('#endif\n\n')
             f.write('\n')
         else:
             f.write('\n')
 
         # include option for position restrains
-        if posre and protein_bool:
-            f.write('#ifdef POSRSTR\n')
-            f.write('#include “'+posre_f+'”\n')
-            f.write('#endif\n\n')
 
         # System section
         f.write("[ system ]\n")
@@ -458,6 +458,9 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
             f.write(f"{row['lipid']:<15}{nlower}\n")
         for ion, count in ions.items():
             f.write(f"{ion:<15}{count}\n")
+        if n_water > 0:
+            sol = "W"
+            f.write(f"{sol:<15}{n_water}\n")
 
     print(f"Topology written to {top_file}")
     print(f"Net system charge before neutralization: {total_charge}")
@@ -532,7 +535,7 @@ def main():
     arg_group_general.add_argument("-top", "--top", type=str, default='topol.top', help='name of gromacs topology .top output file (default: %(default)s)')
     arg_group_general.add_argument("-comp", "--comp", type=str, default=None, help='name of lipid composition .csv file (default: %(default)s)')
     arg_group_general.add_argument("-pitp", "--pitp", type=str, nargs='*', default=None, help='name(s) of protein gromacs topology .itp files (default: %(default)s)')
-    arg_group_general.add_argument("-sol", "--sol", type=str, default=None, help='name of solvent molecule strcture file (default: %(default)s)')
+    arg_group_general.add_argument("-sol", "--sol", type=str, default='/worktmp/scd287/daily/packlipid/data/pdb/martini3/SOL.pdb', help='name of solvent molecule strcture file (default: %(default)s)')
     arg_group_general.add_argument("-struct", "--struct", choices=['pdb', 'gro'], default="pdb", help='type of structure file to read gro or pdb (default: %(default)s)')
     arg_group_general.add_argument("-pref", "--pref", type=str, default='out', help='prefix of output structure file (default: %(default)s)')
     arg_group_general.add_argument("-outdir", "--outdir", type =str, default=None, help='name of output directory (default: run_yyyy-mm-dd-hhmm)')
@@ -547,7 +550,7 @@ def main():
     arg_group_utility.add_argument("-nlower", "--nlower", nargs='*', type = int, default=None, help='Number of lipids constituting the membrane when not reading composition from .csv, order must match --lipids (default: %(default)s)')
     arg_group_utility.add_argument("-solvate", "--solvate", type=str, choices=['yes', 'no'], default='no', help='solvate created strcutre with solvent yes/no (default: %(default)s)')
     arg_group_utility.add_argument("-dsol", "--dsol", type=float, default=20, help='height of water layer above and below the bilayer [Å] (default: %(default)s)')
-    arg_group_utility.add_argument("-neutral", "--neutral", type=str, default='no', help='add ions (Na+/Cl-) to neutralize system net charge to 0 yes/no (default: %(default)s)')
+    arg_group_utility.add_argument("-neutral", "--neutral", type=str, default='yes', help='add ions (Na+/Cl-) to neutralize system net charge to 0 yes/no (default: %(default)s)')
 
     # protein insert arguments
     arg_group_protein.add_argument("-prot", "--prot",type=str, default = None, help='name of protein struture file (default: %(default)s)')
@@ -603,9 +606,9 @@ def main():
         solvate = False
 
     if args.neutral == 'yes':
-        neutral = True  # include neutralizing ions
+        add_ions = True  # include neutralizing ions
     else:
-        neutral = False
+        add_ions = False
 
 
     write_topol = True
@@ -807,7 +810,7 @@ def main():
             prot_coords, prot_ndxs = find_extreme_coords(protein_pdb)
             diff_xy = np.abs(prot_coords[0:-1,1] - prot_coords[0:-1,0])
             r_cylider = np.max(diff_xy) * 0.525
-            h_cylider = np.abs(prot_coords[-1,1] - prot_coords[-1,0]) * 1.05
+            h_cylider = np.abs(prot_coords[-1,1] - prot_coords[-1,0]) #* 1.05
             if (h_cylider + 40) > z: 
                 z = h_cylider +40
             if np.max(diff_xy) + 60 > xy_length and rescale_box == True and n_protein == 1:
@@ -864,6 +867,14 @@ def main():
                     print(f"Total bilayer charge: {total_charge:.2f} e")
                     print("!!!!!!!!!!!!!!!!!!!!!!!")
 
+            # get charge of protein
+            protein_charges = 0
+            for itp in prot_itp_paths:
+                protein_charges += net_charge_from_itp(itp)
+            if dimer:
+                total_charge += protein_charges * (n_protein/2)
+            else:
+                total_charge += protein_charges * n_protein
 
 
             if n_protein == 1:
@@ -886,7 +897,9 @@ def main():
 
         packmol_out = output_dir + '/'+ packmol_out
         with open(packmol_out, 'w') as f:
-            f.write("tolerance 5.0\n")
+            f.write("tolerance 3.0\n")
+            f.write("nloop 10\n")
+            f.write("precision 0.1\n")
             f.write(f"filetype {struct_out_type}\n")
 
             if pbc:
@@ -992,29 +1005,66 @@ def main():
                     f.write(f"    over plane 0. 0. 1. {ll_lim:.2f}\n")
                     f.write("  end atoms\n")
                     f.write("end structure\n\n")
+            
+            if add_ions:
+                if total_charge != 0:
+                    upper = z_center + d_bilayer/2
+                    lower = z_center - d_bilayer/2
+                    n_ion = abs(total_charge)
+                    print(f"Adding {n_ion} ions to neutralize system.")
+                    if n_ion % 2 ==1:
+                        nl_ion = int(n_ion // 2 )
+                        nu_ion = int(n_ion // 2) + 1
+                    else:
+                        nl_ion = int(n_ion // 2)
+                        nu_ion = int(n_ion // 2)
+
+                    f.write(f"structure {water_pdb}\n")
+                    f.write(f"  number {nu_ion}\n")
+                    f.write(f"  inside box 0. 0. {upper:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
+                    f.write("end structure\n\n")
+
+                    f.write(f"structure {water_pdb}\n")
+                    f.write(f"  number {nl_ion}\n")
+                    f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {lower:.2f}\n")
+                    f.write("end structure\n\n")
 
             if solvate:
                 # assume water density at 1atm, 290 K (55.5 mol/l) and 4 water per MARTINI bead
                 rho_w = 8.36  # beads per nm³
-                n_water = round((d_water * xy_length * xy_length) * (rho_w / 1000))
+                if protein:
+                    n_water = round(((z - d_bilayer)/2 * xy_length * xy_length - (prot_area * (h_cylider - d_bilayer))/2) * (rho_w / 1000))
+                else:
+                    n_water = round(((z - d_bilayer)/2 * xy_length * xy_length) * (rho_w / 1000))
+
+                upper = z_center + d_bilayer/2
+                lower = z_center - d_bilayer/2
                 print(f"Solvated system with {2*n_water} water particles.")
                 f.write(f"structure {water_pdb}\n")
                 f.write(f"  number {n_water}\n")
-                f.write(f"  inside box 0. 0. {ul_lim:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
+                f.write(f"  inside box 0. 0. {upper:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
                 f.write("end structure\n\n")
 
                 f.write(f"structure {water_pdb}\n")
                 f.write(f"  number {n_water}\n")
-                f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {ll_lim:.2f}\n")
+                f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {lower:.2f}\n")
                 f.write("end structure\n\n")
+            else:
+                n_water = 0
 
         print("PACKMOL input generated with updated box size and bilayer charge calculated.")
-
+        #print(os.getcwd())
         if write_topol:
             #print(lipid_itps)
             top_file = output_dir + '/' + top_file
-            write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, dimer_bool= dimer, protein_itp=prot_itp_paths, lipid_itp = itp_list, packlipids_dir = packlipids_dir)
+            write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, n_water=2*n_water, dimer_bool= dimer, protein_itp=prot_itp_paths, lipid_itp = itp_list, packlipids_dir = packlipids_dir)
     except SystemExit:
         print("Program execution terminated!")
 
 main()
+
+# gmx editconf -f out.pdb -o out.gro
+# echo -e "del 2 - 20\n r SOL \n 0 & ! 1 & ! r SOL \n name 2 SOL \n name 3 MEMB \n q\n" | gmx make_ndx -f out.gro -n index.ndx -o index.ndx
+# gmx grompp -f minim1.mdp -c out.gro -p DOPE_bilayer.top -n index.ndx -r out.gro -o minim1.tpr -maxwarn 1
+
+# python packlipid.py -top DOPE_bilayer.top -pitp ./data/example/6qm9_proa.itp ./data/example/6qm9_prob.itp -out DOPE_bilayer.inp -out DOPE_bilayer.inp -outdir DOPE -append yes -ff martini3 -delim , -lipids DOPE -nupper 100 -nlower 100 -prot ./data/example/prot.pdb -dimer yes -nprotein 1 -solvate yes

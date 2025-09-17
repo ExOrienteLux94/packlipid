@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: scd287 (410432)
 ;	On host: tuhkakyyhky.lin.tuni.fi
-;	At date: Thu Sep 11 16:02:38 2025
+;	At date: Tue Sep 16 15:20:13 2025
 ;
 ;	Created by:
 ;	                     :-) GROMACS - gmx grompp, 2025.1 (-:
@@ -11,7 +11,7 @@
 ;	Data prefix:  /worktmp/scd287/gromacs-2025.1
 ;	Working dir:  /opt/tuni/worktmp/scd287/daily/packlipid/DOPE
 ;	Command line:
-;	  gmx grompp -f minim1.mdp -c solvated.gro -p DOPE_bilayer.top -n index.ndx -o minim1.tpr
+;	  gmx grompp -f md3.mdp -c md2.gro -p DOPE_bilayer.top -n index.ndx -r minim0.gro -o md3.tpr -maxwarn 1
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -21,11 +21,11 @@ include                  =
 define                   = -DPOSRSTR
 
 ; RUN CONTROL PARAMETERS
-integrator               = steep
+integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0.0
-dt                       = 0.001
-nsteps                   = 5000
+dt                       = 0.020
+nsteps                   = 500000
 ; For exact run continuation or redoing part of a run
 init-step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -67,9 +67,9 @@ nstxout                  = 0
 nstvout                  = 0
 nstfout                  = 0
 ; Output frequency for energies to log file and energy file
-nstlog                   = 100
+nstlog                   = 1000
 nstcalcenergy            = 100
-nstenergy                = 100
+nstenergy                = 1000
 ; Output frequency and precision for .xtc file
 nstxout-compressed       = 1000
 compressed-x-precision   = 100
@@ -142,10 +142,10 @@ nsttcouple               = -1
 nh-chain-length          = 10
 print-nose-hoover-chain-variables = no
 ; Groups to couple separately
-tc-grps                  = Protein MEMB W
+tc-grps                  = MEMB Protein SOL
 ; Time constant (ps) and reference temperature (K)
-tau_t                    = 1.0 1.0 1.0
-ref_t                    = 310.15 310.15
+tau_t                    = 1.0  1.0 1.0
+ref_t                    = 310.15 310.15 310.15
 ; pressure coupling     
 Pcoupl                   = berendsen
 Pcoupltype               = semiisotropic
@@ -173,9 +173,9 @@ annealing-time           =
 annealing-temp           = 
 
 ; GENERATE VELOCITIES FOR STARTUP RUN
-gen_vel                  = yes
-gen_temp                 = 303.15
-gen_seed                 = 5731513605
+gen_vel                  = no
+gen-temp                 = 300
+gen-seed                 = -1246766274
 
 ; OPTIONS FOR BONDS    
 constraints              = none
@@ -246,15 +246,15 @@ orire-fitgrp             =
 nstorireout              = 100
 
 ; Free energy variables
-free-energy              = yes
-couple-moltype           = system
+free-energy              = no
+couple-moltype           = 
 couple-lambda0           = vdw-q
-couple-lambda1           = none
-couple-intramol          = yes
-init-lambda              = 0.01
+couple-lambda1           = vdw-q
+couple-intramol          = no
+init-lambda              = -1
 init-lambda-state        = -1
 delta-lambda             = 0
-nstdhdl                  = 0
+nstdhdl                  = 50
 fep-lambdas              = 
 mass-lambdas             = 
 coul-lambdas             = 
@@ -268,11 +268,11 @@ init-lambda-counts       =
 init-wl-histogram-counts = 
 dhdl-print-energy        = no
 sc-function              = beutler
-sc-alpha                 = 4
-sc-power                 = 2
+sc-alpha                 = 0
+sc-power                 = 1
 sc-r-power               = 6
 sc-sigma                 = 0.3
-sc-coul                  = yes
+sc-coul                  = no
 sc-gapsys-scale-linpoint-lj = 0.85
 sc-gapsys-scale-linpoint-q = 0.3
 sc-gapsys-sigma-lj       = 0.3
