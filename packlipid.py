@@ -374,7 +374,7 @@ def get_molnames(itp_file, target=None):
         lines = f.readlines()
 
     for i, line in enumerate(lines, start=1):
-        if line.strip().startswith("; molname"):
+        if line.strip().startswith("[moleculetype]") or  line.strip().startswith("[ moleculetype ]"):
             # The next non-empty, non-comment line is the molecule name
             j = i
             while j < len(lines):
