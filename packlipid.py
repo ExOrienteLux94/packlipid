@@ -813,13 +813,13 @@ def main():
             h_cylider = np.abs(prot_coords[-1,1] - prot_coords[-1,0]) #* 1.05
             if (h_cylider + 40) > z: 
                 z = h_cylider +40
-            if np.max(diff_xy) + 60 > xy_length and rescale_box == True and n_protein == 1:
+            if np.max(diff_xy) + 80 > xy_length and rescale_box == True and n_protein == 1:
                 # scale mebrane components
                 print("!!!!!!!!!!!!!!!!!!!!!!!")  
                 print("Initial bilayer dimensions are too small to fit imbedded protein structure with minimum immage convention.")
                 print("Rescaling box size to fit protein in membrane.")
                 xy_length_old = xy_length 
-                xy_length = np.max(diff_xy) + 60
+                xy_length = np.max(diff_xy) + 80
 
             # center protein in box 
             if center:
