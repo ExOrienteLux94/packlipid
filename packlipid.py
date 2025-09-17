@@ -772,6 +772,8 @@ def main():
                 else:
                     lipid_itps = glob.glob(os.path.join(itp_dir, "*.itp"))
                     for fn in lipid_itps:
+                        print(itp_dir)
+                        print(fn)
                         if lipid in get_molnames(fn, target=str(lipid)):
                             itp_list.append(fn)
                             break
