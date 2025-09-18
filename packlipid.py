@@ -615,7 +615,7 @@ def main():
     top_file = args.top
     prot_itps = args.pitp
 
-    
+    prot_itp_paths = None
     if protein:
         # absolute paths fro prot_itps
         prot_itp_paths = []
@@ -668,10 +668,15 @@ def main():
         
 
         # copy input files to output directory
-        if comp_in != None:
-            files_to_copy = [comp_in, protein_pdb] + prot_itp_paths
+        files_to_copy = []
+        if protein:
+            if comp_in != None:
+                files_to_copy = [comp_in, protein_pdb] + prot_itp_paths
+            else:
+                files_to_copy = [protein_pdb] + prot_itp_paths
         else:
-            files_to_copy = [protein_pdb] + prot_itp_paths
+            if comp_in != None:
+                files_to_copy = [comp_in]
         for src_file in files_to_copy:
             if os.path.exists(src_file):
                 dst_file = os.path.join(dirname, os.path.basename(src_file))
@@ -964,7 +969,7 @@ def main():
 
                 # Upper leaflet
                 if upper > 0:
-                    ul_lim = z_center + 10
+                    ul_lim = z_center + (d_bilayer/2)*0.7
                     f.write(f"structure {pdb_file}\n")
                     f.write(f"  number {upper}\n")
                     f.write(f"  inside box 0. 0. {z_center:.2f} {xy_length:.2f} {xy_length:.2f} {z:.2f}\n")
@@ -986,7 +991,7 @@ def main():
 
                 # Lower leaflet
                 if lower > 0:
-                    ll_lim = z_center - 10
+                    ll_lim = z_center - + (d_bilayer/2)*0.7
                     f.write(f"structure {pdb_file}\n")
                     f.write(f"  number {lower}\n")
                     f.write(f"  inside box 0. 0. 0. {xy_length:.2f} {xy_length:.2f} {z_center:.2f}\n")
