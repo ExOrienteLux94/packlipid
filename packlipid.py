@@ -615,10 +615,12 @@ def main():
     top_file = args.top
     prot_itps = args.pitp
 
-    # absolute paths fro prot_itps
-    prot_itp_paths = []
-    for itp in prot_itps:
-        prot_itp_paths.append(str(Path(itp).resolve()))
+    
+    if protein:
+        # absolute paths fro prot_itps
+        prot_itp_paths = []
+        for itp in prot_itps:
+            prot_itp_paths.append(str(Path(itp).resolve()))
     
 
     rescale_box = True

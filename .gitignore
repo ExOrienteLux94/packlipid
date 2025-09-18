@@ -1,6 +1,15 @@
 # ignore .pdbs
 ./*.pdb
 ./*.gro
+./DOPE
 ./run_*
 *.md
 *.inp
+**/*.inp
+**/*.gro
+**/*.pdb*
+**/*.ndx
+**/*.top
+**/*minim*
+**/*md*
+**/*#*
