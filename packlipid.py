@@ -387,7 +387,7 @@ def get_molnames(itp_file, target=None):
                 j += 1
     return molnames
 
-def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, n_water = 0, dimer_bool = False, protein_bool = False, posre = True, posre_f = 'posrstr.itp', packlipids_dir = '.'):
+def write_topology(top_file, df, total_charge, system_name='bilayer system', lipid_itp=None, protein_itp = None, n_prot = 0, n_water = 0, protein_bool = False, posre = True, posre_f = 'posrstr.itp', packlipids_dir = '.'):
     """
     Write a Martini .top file given a dataframe of lipid composition (upper/lower leaflet)
     and net system charge.
@@ -446,10 +446,7 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
         if protein_bool == True:
             for itp in protein_itp:
                 mol_name = get_molname_from_itp(itp)    
-                if dimer_bool:
-                    f.write(f"{mol_name:<15}{n_prot}\n")
-                else:
-                    f.write(f"{mol_name:<15}{n_prot}\n")
+                f.write(f"{mol_name:<15}{n_prot}\n")
         for _, row in df.iterrows():
             #total_count = int(row["upper"]) + int(row["lower"])
             nupper = int(row["upper"])
@@ -554,7 +551,6 @@ def main():
 
     # protein insert arguments
     arg_group_protein.add_argument("-prot", "--prot",type=str, default = None, help='name of protein struture file (default: %(default)s)')
-    arg_group_protein.add_argument("-dimer", "--dimer", type=str, choices=['yes', 'no'], default='no', help='protein .pdb file contains a dimer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-orient", "--orient", type=str, choices=['yes', 'no'], default='no', help='reorient protein structure with respect to bilayer yes/no (default: %(default)s)')
     arg_group_protein.add_argument("-nprotein", "--nprotein", type=int, help='number of protein structures to inbed in bilayer (default: %(default)s)')
     arg_group_protein.add_argument("-method", "--method", choices=['replace', 'scale'], default='replace', help='method for inserting protein structure in bilayer, options: %(choices)s (default: %(default)s)')
@@ -593,10 +589,6 @@ def main():
     n_protein = args.nprotein # number of protein copies to include
     protein_distr_mode = args.dstr # distribution mode 'random', 'grid', or 'polygon'
     protein_insert_method = args.method # insertion method 'replace' or 'scale'
-    if args.dimer == 'yes':
-        dimer = True  # protein .pdb is a dimer
-    else:
-        dimer = False
 
     plot_protein_dstr = True # plot protein COMs
 
@@ -1062,7 +1054,7 @@ def main():
         if write_topol:
             #print(lipid_itps)
             top_file = output_dir + '/' + top_file
-            write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, n_water=2*n_water, dimer_bool= dimer, protein_itp=prot_itp_paths, lipid_itp = itp_list, packlipids_dir = packlipids_dir)
+            write_topology(top_file, df = merged, total_charge=int(total_charge), protein_bool = protein, n_prot= n_protein, n_water=2*n_water, protein_itp=prot_itp_paths, lipid_itp = itp_list, packlipids_dir = packlipids_dir)
     except SystemExit:
         print("Program execution terminated!")
 
