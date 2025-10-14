@@ -1023,7 +1023,7 @@
   11 12 	b_C1_C1_mid
   12 13 	b_C1_C4_mid
   13 14 	b_C4_C1_mid
-  13 14 	b_C1_C1_end
+  14 15 	b_C1_C1_end
 
 [angles]
 ;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)

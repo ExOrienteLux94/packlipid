@@ -709,7 +709,7 @@ def main():
         print("***************")
         # Merge on lipid name
         merged = pd.merge(composition, areas, how="left", on="lipid")
-        merged["area"]   = merged["area"].fillna(60) # fill out missing areas
+        merged["area"]   = merged["area"].fillna(80) # fill out missing areas
         #print(merged)
         #check for NaN values in charge
         nan_ndx = merged[merged["charge"].isna()].index
@@ -758,16 +758,18 @@ def main():
             itp_dir = packlipids_dir + '/data/ffs/martini3/lipids/'
             # figure out which lipid itps are needed
             for lipid in merged['lipid']:
-                #hits = 0
+                hits = 0
                 lipid_itps = glob.glob(os.path.join(itp_dir, "*.itp"))
                 for fn in lipid_itps:
             
                     if lipid in get_molnames(fn):
                         itp_list.append(fn)
-                        #hits += 1
+                        hits += 1
                         break
-                #if hits > 1:
-                 #   print(f"Found more than 1 match for molecule {lipid}")
+                if hits > 1:
+                    print(f"Found more than 1 match for molecule {lipid}")
+                if hits == 0:
+                    print(f".ipt file not found for molecule {lipid}")
         #print(lipid_itps)
             itp_list = list(dict.fromkeys(itp_list))
     except IOError:
@@ -891,7 +893,7 @@ def main():
         packmol_out = output_dir + '/'+ packmol_out
         with open(packmol_out, 'w') as f:
             f.write("tolerance 3.0\n")
-            f.write("nloop 10\n")
+            f.write("nloop 100\n")
             f.write("precision 0.1\n")
             f.write(f"filetype {struct_out_type}\n")
 

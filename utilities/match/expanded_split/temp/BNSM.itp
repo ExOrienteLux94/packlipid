@@ -37,7 +37,7 @@
   11 12 	1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
   12 13 	1      0.475    2800.0    ; containing a double bond in one bead
   13 14 	1      0.475    2800.0    ; symmetric, same as b_C1_C4_mid
-  13 14 	1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
+  14 15 	1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
 
 [angles]
 ;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
