@@ -1,0 +1,128 @@
+                      :-) GROMACS - gmx grompp, 2025.1 (-:
+
+Executable:   /opt/tuni/worktmp/scd287/gromacs-2025.1/bin/gmx
+Data prefix:  /opt/tuni/worktmp/scd287/gromacs-2025.1
+Working dir:  /opt/tuni/worktmp/scd287/daily/packlipid/utilities/expanded_split
+Command line:
+  gmx grompp -f .molmk_SAPI.mdp -p .molmk_SAPI.top -c .molmk_SAPI.gro -maxwarn 3 -po .molmk_SAPI.out.mdp -o .molmk_SAPI.tpr
+
+Ignoring obsolete mdp entry 'ns-type'
+
+NOTE 1 [file .molmk_SAPI.mdp, line 41]:
+  For proper sampling of the (nearly) decoupled state, stochastic dynamics
+  should be used
+
+
+NOTE 2 [file .molmk_SAPI.mdp]:
+  With Verlet lists the optimal nstlist is >= 10, with GPUs >= 20. Note
+  that with the Verlet scheme, nstlist has no effect on the accuracy of
+  your simulation.
+
+
+NOTE 3 [file .molmk_SAPI.top, line 7]:
+  System has non-zero total charge: -1.000000
+  Total charge should normally be an integer. See
+  https://manual.gromacs.org/current/user-guide/floating-point.html
+  for discussion on how close it should be to an integer.
+
+
+
+atom name 1 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C1 - DUM)
+
+atom name 2 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C2 - DUM)
+
+atom name 3 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C3 - DUM)
+
+atom name 4 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C4 - DUM)
+
+atom name 5 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (PO4 - DUM)
+
+atom name 6 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (GL1 - DUM)
+
+atom name 7 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (GL2 - DUM)
+
+atom name 8 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C1A - DUM)
+
+atom name 9 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (D2A - DUM)
+
+atom name 10 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (D3A - DUM)
+
+atom name 11 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (D4A - DUM)
+
+atom name 12 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C5A - DUM)
+
+atom name 13 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C1B - DUM)
+
+atom name 14 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C2B - DUM)
+
+atom name 15 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C3B - DUM)
+
+atom name 16 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C4B - DUM)
+
+WARNING 1 [file .molmk_SAPI.top, line 7]:
+  16 non-matching atom names
+  atom names from .molmk_SAPI.top will be used
+  atom names from .molmk_SAPI.gro will be ignored
+
+
+Number of degrees of freedom in T-Coupling group rest is 39.00
+The integrator does not provide a ensemble temperature, there is no system ensemble temperature
+
+NOTE 4 [file .molmk_SAPI.mdp]:
+  You are using a plain Coulomb cut-off, which might produce artifacts.
+  You might want to consider using PME electrostatics.
+
+
+
+There were 4 NOTEs
+
+There was 1 WARNING
+
+GROMACS reminds you: "Ich Bin Ein Berliner" (J.F. Kennedy)
+
+Setting the LD random seed to 536328183
+
+Generated 1689 of the 357435 non-bonded parameter combinations
+
+Excluding 1 bonded neighbours molecule type 'SAPI'
+
+Coupling 1 copies of molecule type 'system'
+
+atom name 1 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C1 - DUM)
+
+atom name 2 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C2 - DUM)
+
+atom name 3 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C3 - DUM)
+
+atom name 4 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C4 - DUM)
+
+atom name 5 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (PO4 - DUM)
+
+atom name 6 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (GL1 - DUM)
+
+atom name 7 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (GL2 - DUM)
+
+atom name 8 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C1A - DUM)
+
+atom name 9 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (D2A - DUM)
+
+atom name 10 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (D3A - DUM)
+
+atom name 11 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (D4A - DUM)
+
+atom name 12 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C5A - DUM)
+
+atom name 13 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C1B - DUM)
+
+atom name 14 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C2B - DUM)
+
+atom name 15 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C3B - DUM)
+
+atom name 16 in .molmk_SAPI.top and .molmk_SAPI.gro does not match (C4B - DUM)
+
+Cleaning up constraints and constant bonded interactions with virtual sites
+Analysing residue names:
+There are:     1      Other residues
+Analysing residues not classified as Protein/DNA/RNA/Water and splitting into groups...
+
+This run will generate roughly 1 Mb of data

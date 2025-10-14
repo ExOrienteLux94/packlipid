@@ -1,0 +1,34 @@
+[moleculetype]
+LA 	1
+
+[atoms]
+; id type   resnr     residu   atom    cgnr charge
+1   SQ5n 	1 	LA 	COO 	1      -1.0
+2   C1  	1 	LA 	C1A 	2  	0
+3   C4h 	1 	LA 	D2A 	3  	0
+4   C4h  	1 	LA 	D3A 	4  	0
+5   C1  	1 	LA 	C4A 	5  	0
+		
+[bonds]
+; i j funct length force.c.
+1 2 	1 	0.400	2800.0
+2 3 	1      0.505    2800.0 
+3 4 	1      0.460    2800.0    ; containing a double bond in both beads
+4 5 	1      0.485    2800.0 
+
+[angles]
+ 1  2  3 	1	180.0	13.5
+ 2  3  4 	1      135.0	8.0    ; second double bond results in different angle distribution
+ 3  4  5 	1      135.0	8.0    ; second double bond results in different angle distribution
+
+;;;;; 
+;;;;; α-linolenic acid (omega-3) 
+;;;;; LNA
+;;;;; 
+
+;;;;; BEAD-INDEX MAPPING
+;;;;; topology description
+;;;;; 
+;
+; COO-C1A-D2A-D3A-D4A    1-2-3-4-5
+

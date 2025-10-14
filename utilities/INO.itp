@@ -1,0 +1,27 @@
+[ moleculetype ]
+  INO            1
+
+[ atoms ]
+1      SP4r      1       INO     C1      1       0
+2      SP4r      1       INO     C2      2       0
+3      SP4r      1       INO     C3      3       0
+4       TC4      1       INO     C4      4       0        0
+
+[ bonds ]
+
+[ angles ]
+
+[ dihedrals ]
+
+
+[ virtual_sitesn ]
+   4     2     1 2 3
+
+[ exclusions ]
+ 1 2 3 4
+ 2 3 4
+ 3 4
+
+
+
+

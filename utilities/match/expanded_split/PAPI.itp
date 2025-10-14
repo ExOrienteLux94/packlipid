@@ -1,0 +1,91 @@
+[moleculetype]
+; molname      nrexcl
+  PAPI          1
+
+[atoms]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    (mass)
+   1    SP1   1  PAPI   C1   1 	0
+   2   SP4r   1  PAPI   C2   2 	0
+   3   SP4r   1  PAPI   C3   3 	0
+   4    TC4   1  PAPI   C4   4 	0 	0 	; Massless virtual bead
+   5     Q5   1  PAPI  PO4   5 	-1.0
+   6   SN4a   1  PAPI  GL1   6 	0
+   7   SN4a   1  PAPI  GL2   7 	0
+   8    SC1   1  PAPI  C1A   8 	0
+   9    C5h   1  PAPI  D2A   9 	0
+  10    C5h   1  PAPI  D3A  10 	0
+  11    C4h   1  PAPI  D4A  11 	0
+  12     C1   1  PAPI  C5A  12 	0
+  13    SC1   1  PAPI  C1B  13 	0
+  14     C1   1  PAPI  C2B  14 	0
+  15     C1   1  PAPI  C3B  15 	0
+  16     C1   1  PAPI  C4B  16 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+#ifdef FLEXIBLE
+; Using bonds not constraints
+   1  2   1 	0.3720 	30000
+   1  3   1 	0.3696 	30000
+   2  3   1 	0.4044 	30000
+#endif
+; Phosphodiester and glycerol backbone
+   1  5   1 	0.33  	 5000 	; C1 PO4
+   5  6   1 	0.368 	2250 	; PO4 GL1
+   5  7   1 	0.518 	 600 	; PO4 GL2
+; Lipid tail (uses standard Martini tail rules)
+   6  7 	1 	0.315	2100.0    ; in glycerol using SN4a beads
+   6  8 	1 	0.375	4400.0    ; to distinguish shorter tail e.g. 16:0 from 18:0
+   8  9 	1      0.405    4400.0
+   9 10 	1      0.460    2800.0    ; containing a double bond in both beads
+  10 11 	1      0.460    2800.0    ; containing a double bond in both beads
+  11 12 	1      0.485    2800.0
+   7 13 	1 	0.375	4400.0    ; to distinguish shorter tail e.g. 16:0 from 18:0
+  13 14 	1      0.420    4400.0    ; to be used between S to R beads
+  14 15 	1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
+  15 16 	1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+; Orient the headgroup
+   2  1  5  10 	100.0 	15.0 	; C2 C1 PO4
+   1  5  6  10 	100.0 	 4.0 	; C1 PO4 GL1
+; Tail part (uses standard Martini tail rules)
+   7  6  8 	1	120.0	20.0 ; glycerol backbone to tail angle
+   6  7 13 	1	120.0	20.0 ; glycerol backbone to tail angle
+   6  8  9 	1	180.0	13.5
+   8  9 10 	1      135.0	8.0    ; second double bond results in different angle distribution
+   9 10 11 	1      150.0	6.0    ; three double bonds in a row seem to sample a broader distribution of angles with a tendency for the third doube bond to point in the opposite direction
+  10 11 12 	1      135.0	8.0
+   7 13 14 	1	180.0	13.5
+  13 14 15 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+  14 15 16 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+
+[dihedrals]
+;  i  j  k  l 	name 	(using named dihedraltypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k  l 	funct 	angle 	force.c.
+; Orient the headgroup
+   3  2  1  5   2 	-148 	95.0 	 	; C3 C2 C1 PO4
+   2  1  5  6   1 	180 	2.0 	2 	; C3 C2 C1 PO4
+
+[constraints]
+;  i  j  k 	funct 	length
+#ifndef FLEXIBLE
+; Using constraints not bonds
+   1  2 	1 	0.3720 	; C1 C2   Expanded 20% to account for SASA
+   1  3 	1 	0.3696 	; C1 C3
+   2  3 	1 	0.4044 	; C2 C3
+#endif
+
+[ virtual_sitesn ]
+; site funct  constructing atom indices
+   4     2     1 2 3
+
+[exclusions]
+; i  j  k  ...
+  4 3 2 1 5
+  3 2 1
+  2 1
+

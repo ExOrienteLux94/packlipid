@@ -1,0 +1,97 @@
+                      :-) GROMACS - gmx grompp, 2025.1 (-:
+
+Executable:   /opt/tuni/worktmp/scd287/gromacs-2025.1/bin/gmx
+Data prefix:  /opt/tuni/worktmp/scd287/gromacs-2025.1
+Working dir:  /opt/tuni/worktmp/scd287/daily/packlipid/utilities
+Command line:
+  gmx grompp -f .molmk_INO2_13.mdp -p .molmk_INO2_13.top -c .molmk_INO2_13.gro -maxwarn 3 -po .molmk_INO2_13.out.mdp -o .molmk_INO2_13.tpr
+
+Ignoring obsolete mdp entry 'ns-type'
+
+NOTE 1 [file .molmk_INO2_13.mdp, line 41]:
+  For proper sampling of the (nearly) decoupled state, stochastic dynamics
+  should be used
+
+
+NOTE 2 [file .molmk_INO2_13.mdp]:
+  With Verlet lists the optimal nstlist is >= 10, with GPUs >= 20. Note
+  that with the Verlet scheme, nstlist has no effect on the accuracy of
+  your simulation.
+
+
+NOTE 3 [file .molmk_INO2_13.top, line 7]:
+  System has non-zero total charge: -3.000000
+  Total charge should normally be an integer. See
+  https://manual.gromacs.org/current/user-guide/floating-point.html
+  for discussion on how close it should be to an integer.
+
+
+
+atom name 1 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C1 - DUM)
+
+atom name 2 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C2 - DUM)
+
+atom name 3 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C3 - DUM)
+
+atom name 4 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C4 - DUM)
+
+atom name 5 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (P1 - DUM)
+
+atom name 6 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (P3 - DUM)
+
+WARNING 1 [file .molmk_INO2_13.top, line 7]:
+  6 non-matching atom names
+  atom names from .molmk_INO2_13.top will be used
+  atom names from .molmk_INO2_13.gro will be ignored
+
+
+
+NOTE 4 [file .molmk_INO2_13.top, line 7]:
+  In moleculetype 'INO2_13' 1 atoms are not bound by a potential or
+  constraint to any other atom in the same moleculetype. Although
+  technically this might not cause issues in a simulation, this often means
+  that the user forgot to add a bond/potential/constraint or put multiple
+  molecules in the same moleculetype definition by mistake. Run with -v to
+  get information for each atom.
+
+Number of degrees of freedom in T-Coupling group rest is 12.00
+The integrator does not provide a ensemble temperature, there is no system ensemble temperature
+
+NOTE 5 [file .molmk_INO2_13.mdp]:
+  You are using a plain Coulomb cut-off, which might produce artifacts.
+  You might want to consider using PME electrostatics.
+
+
+
+There were 5 NOTEs
+
+There was 1 WARNING
+
+GROMACS reminds you: "BioBeat is Not Available In Regular Shops" (P.J. Meulenhoff)
+
+Setting the LD random seed to -404881617
+
+Generated 1689 of the 357435 non-bonded parameter combinations
+
+Excluding 1 bonded neighbours molecule type 'INO2_13'
+
+Coupling 1 copies of molecule type 'system'
+
+atom name 1 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C1 - DUM)
+
+atom name 2 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C2 - DUM)
+
+atom name 3 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C3 - DUM)
+
+atom name 4 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (C4 - DUM)
+
+atom name 5 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (P1 - DUM)
+
+atom name 6 in .molmk_INO2_13.top and .molmk_INO2_13.gro does not match (P3 - DUM)
+
+Cleaning up constraints and constant bonded interactions with virtual sites
+Analysing residue names:
+There are:     1      Other residues
+Analysing residues not classified as Protein/DNA/RNA/Water and splitting into groups...
+
+This run will generate roughly 0 Mb of data

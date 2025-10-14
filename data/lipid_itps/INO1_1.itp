@@ -1,0 +1,61 @@
+[ moleculetype ]
+; molname      nrexcl
+  INO1_1          1
+
+[ atoms ]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    mass
+   1 	SP1	  1 	INO1 	C1  	 1 	0
+   2 	SP4	  1 	INO1 	C2  	 2 	0
+   3 	SP4	  1 	INO1 	C3  	 3 	0
+   4 	TC4	  1 	INO1 	C4  	 4 	0 	 0
+   5 	Q5 	  1 	INO1 	P1  	 5 	-1.0
+
+[ bonds ]
+;  i  j 	funct 	length 	force.c.
+#ifdef FLEXIBLE
+; Using bonds not constraints
+   1  2 	1 	0.3720 	30000
+   1  3 	1 	0.3696	30000
+   2  3 	1 	0.4044	30000
+#endif
+   1  5 	1 	0.330 	5000         ;C1 PO4
+
+[ angles ]
+;  i  j  k 	funct 	angle 	force.c.
+   2  1  5  	10	   100.0 	15.0    ;  C2  C1 P1
+
+[ dihedrals ]
+;  i  j  k  l 	funct 	angle 	force.c.
+ 3  2  1  5       2      -148.0   95.0       ;C3 C2 C1 P1
+
+#ifndef FLEXIBLE
+[ constraints ]
+;  i  j  k 	funct 	length
+; Using constraints not bonds
+   1  2 	1 	0.3720         ;C1 C2  expanded by 20% to account for SASA differences
+   1  3 	1 	0.3696     	   ;C1 C3
+   2  3 	1 	0.4044     	   ;C2 C3
+#endif
+
+[ virtual_sitesn ]
+; site funct  constructing atom indices
+   4     2     1 2 3
+
+[ exclusions ]
+;  i  j
+4 3 2 1 5
+3 2 1
+2 1
+
+
+
+; myo-Inositol 1,3-bisphosphate
+;
+;      C2 — — — C3 — P3
+;       \  C4  /
+;        \    /
+;          C1
+;          |
+;          P1
+;
+

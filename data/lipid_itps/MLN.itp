@@ -1,0 +1,36 @@
+[moleculetype]
+MLN 	1
+
+[atoms]
+; id type   resnr     residu   atom    cgnr charge
+1   SP4r  	1 	MLN 	DOH 	1  	0
+2   SN4a 	1 	MLN 	GL1 	2       0
+3   C1  	1 	MLN 	C1A 	3  	0 ; 5-1 mapping
+4   C4h 	1 	MLN 	D2A 	4  	0
+5   C4h  	1 	MLN 	D3A 	5  	0
+6   C4h  	1 	MLN 	D4A 	6  	0
+		
+[bonds]
+; i j funct length force.c.
+1 2 	1	0.313   4400.0    ; diol in monoglycerides   
+2 3 	1 	0.450	2400.0    ; attaching glycerol+ester beads to hydrocarbon tails    
+3 4 	1      0.505    2800.0
+4 5 	1      0.460    2800.0    ; containing a double bond in both beads
+5 6 	1      0.460    2800.0    ; containing a double bond in both beads
+
+[angles]
+ 1  2  3 	1	132.0	14.0 ; diol in monoglycerides
+ 2  3  4 	1	180.0	13.5
+ 3  4  5 	1      135.0	8.0    ; second double bond results in different angle distribution 
+ 4  5  6 	1      150.0	6.0    ; three double bonds in a row seem to sample a broader distribution of angles with a tendency for the third doube bond to point in the opposite direction
+
+;;;;; Monostearin
+;;;;; MS
+;;;;; 
+
+;;;;; BEAD-INDEX MAPPING
+;;;;; topology description
+;
+; DOH-GL1-C1A-C2A-C3A-C4A    1-2-3-4-5-6
+;
+

@@ -29,7 +29,7 @@ def find_tail_atoms(pdb_path):
                     tail_B.append(atom_num)
 
     return {
-        'first_atom': min(P_atoms) if P_atoms else None,
+        'first_atom': min(P_atoms) if P_atoms else 1,
         'last_A': tail_A[-1] if tail_A else None,
         'last_B': tail_B[-1] if tail_B else None,
         'last_atom': last_atom
@@ -50,12 +50,12 @@ def write_topology(top_file, lipid, system_name='single lipid', lipid_itp=None):
     with open(top_file, "w") as f:
         # Header
         f.write("; Generated Martini topology\n")
-        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0.itp"\n\n')
-        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_ffbonded_v2.itp"\n')
-        f.write('#include "/worktmp/scd287/daily/packlipid/lipid_itps/'+ lipid_itp +'"\n')
+        f.write('#include "/worktmp/scd287/daily/packlipid/data/ffs/martini3/lipids/martini_v3.0.0.itp"\n\n')
+        f.write('#include "/worktmp/scd287/daily/packlipid/data/ffs/martini3/lipids/martini_v3.0.0_ffbonded_v2.itp"\n')
+        f.write('#include "/worktmp/scd287/daily/packlipid/data/lipid_itps/'+ lipid_itp +'"\n')
         f.write('\n')
-        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_ions_v1.itp"\n\n')
-        f.write('#include "/worktmp/scd287/daily/martini3/lipids/martini_v3.0.0_solvents_v1.itp"\n\n')
+        f.write('#include "/worktmp/scd287/daily/packlipid/data/ffs/martini3/lipids/martini_v3.0.0_ions_v1.itp"\n\n')
+        f.write('#include "/worktmp/scd287/daily/packlipid/data/ffs/martini3/lipids/martini_v3.0.0_solvents_v1.itp"\n\n')
 
         # System section
         f.write("[ system ]\n")
@@ -75,7 +75,7 @@ def main():
         sys.exit(1)
 
     pdb_file = sys.argv[2] + '_bb.pdb'
-    gro_file = sys.argv[2] + '_bb.gro'
+    gro_file = sys.argv[2] + '.gro'
     mdp_file = sys.argv[3]
     top_file = sys.argv[2] + '.top'
     lipid = sys.argv[1]
@@ -91,7 +91,7 @@ def main():
         cmd = 'echo -e \" del 1-10 \n 0 & a '+str(ndx['first_atom']) +' \n 0 & a '+str(ndx['last_A'])+' \n 0 & a '+str(ndx['last_B'])+' \n name 1 P \n name 2 tA \n name 3 tB \n q\" | gmx make_ndx -f '+gro_file+' -o '+ndx_file
         nr = 3
     else: 
-        cmd = 'echo -e \" del 1-10 \n 0 & a '+str(ndx['first_atom']) +' \n 0 & a '+str(ndx['last_atom'])+'name 1 P \n name 2 tA \n q\" | gmx make_ndx -f '+gro_file+' -o '+ndx_file
+        cmd = 'echo -e \" del 1-10 \n 0 & a '+str(ndx['first_atom']) +' \n 0 & a '+str(ndx['last_atom'])+'\n name 1 P \n name 2 tA \n q\" | gmx make_ndx -f '+gro_file+' -o '+ndx_file
         nr = 2
     os.system(cmd)
 

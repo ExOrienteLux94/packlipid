@@ -423,7 +423,63 @@
   10 11 12 	a_C1_C1_C1_def
   11 12 13 	a_C1_C1_C1_def
 
+;;;
+;;;;;; Martini lipid topology for C(d20:1/20:0) SM (DBSM)
 
+[moleculetype]
+; molname      nrexcl
+  DBSM          1
+
+[atoms]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    (mass)
+   1     Q1   1  DBSM  NC3   1 	1.0
+   2     Q5   1  DBSM  PO4   2 	-1.0
+   3    SP1   1  DBSM  OH1   3 	0
+   4    SP2   1  DBSM  AM2   4 	0
+   5   SC4h   1  DBSM  T1A   5 	0
+   6     C1   1  DBSM  C2A   6 	0
+   7     C1   1  DBSM  C3A   7 	0
+   8     C1   1  DBSM  C4A   8 	0
+   9     C1   1  DBSM  C5A   9 	0
+  10    SC1   1  DBSM  C1B  10 	0
+  11     C1   1  DBSM  C2B  11 	0
+  12     C1   1  DBSM  C3B  12 	0
+  13     C1   1  DBSM  C4B  13 	0
+  14     C1   1  DBSM  C5B  14 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+   1  2 	b_NC3_PO4_def
+   2  3 	b_PO4_OH1_sm
+   2  4 	b_PO4_AM2_sm
+   3  4 	b_OH1_AM2_sm
+   3  5 	b_OH1_SC4_sm
+   5  6 	b_SC4_C1_mid
+   6  7 	b_C1_C1_mid
+   7  8 	b_C1_C1_mid
+   8  9 	b_C1_C1_end
+   4 10 	b_AM2_SC1_sm
+  10 11 	b_SC1_C1_mid
+  11 12 	b_C1_C1_mid
+  12 13 	b_C1_C1_mid
+  13 14 	b_C1_C1_end
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+   1  2  3 	a_NC3_PO4_OH1_sm
+   2  3  5 	a_PO4_OH1_C_sm
+   4  3  5 	a_AM2_OH1_C_sm
+   3  4 10 	a_OH1_AM2_C_sm
+   3  5  6 	a_OH1_C1_C1_sm
+   5  6  7 	a_C1_C1_C1_def
+   6  7  8 	a_C1_C1_C1_def
+   7  8  9 	a_C1_C1_C1_def
+   4 10 11 	a_AM2_C1_C1_sm
+  10 11 12 	a_C1_C1_C1_def
+  11 12 13 	a_C1_C1_C1_def
+  12 13 14 	a_C1_C1_C1_def
 
 ;;;;;; Martini lipid topology for C(d18:1/22:0) SM (BSM), generated using:
 ; The Martini lipid itp generator version M3.l01  Args are: -alname BSM -alhead 'C P' -allink 'A1 A2' -altail 'tCCC CCCCC'
@@ -508,7 +564,6 @@
    9 10 11 	a_C1_C1_C1_def
   10 11 12 	a_C1_C1_C1_def
   11 12 13 	a_C1_C1_C1_def
-
 
 
 ;;;;;; Martini lipid topology for C(d18:1/24:0) SM (XSM), generated using:
@@ -598,6 +653,71 @@
   11 12 13 	a_C1_C1_C1_def
   12 13 14 	a_C1_C1_C1_def
 
+
+;;;;;;
+;;;;;; Martini lipid topology for C(d24:1/24:0) SM (DXSM)
+
+[moleculetype]
+; molname      nrexcl
+  DXSM          1
+
+[atoms]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    (mass)
+   1     Q1   1  DXSM  NC3   1 	1.0
+   2     Q5   1  DXSM  PO4   2 	-1.0
+   3    SP1   1  DXSM  OH1   3 	0
+   4    SP2   1  DXSM  AM2   4 	0
+   5   SC4h   1  DXSM  T1A   5 	0
+   6     C1   1  DXSM  C2A   6 	0
+   7     C1   1  DXSM  C3A   7 	0
+   8     C1   1  DXSM  C4A   8 	0
+   9     C1   1  DXSM  C5A   9  0
+  10     C1   1  DXSM  C6A  10  0
+  11    SC1   1  DXSM  C1B  11 	0
+  12     C1   1  DXSM  C2B  12 	0
+  13     C1   1  DXSM  C3B  13 	0
+  14     C1   1  DXSM  C4B  14 	0
+  15     C1   1  DXSM  C5B  15 	0
+  16     C1   1  DXSM  C6B  16 	0
+
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+   1  2 	b_NC3_PO4_def
+   2  3 	b_PO4_OH1_sm
+   2  4 	b_PO4_AM2_sm
+   3  4 	b_OH1_AM2_sm
+   3  5 	b_OH1_SC4_sm
+   5  6 	b_SC4_C1_mid
+   6  7 	b_C1_C1_mid
+   7  8 	b_C1_C1_mid
+   8  9 	b_C1_C1_mid
+   9 10         b_C1_C1_end
+   4 11 	b_AM2_SC1_sm
+  11 12 	b_SC1_C1_mid
+  12 13 	b_C1_C1_mid
+  13 14 	b_C1_C1_mid
+  14 15 	b_C1_C1_mid
+  15 16 	b_C1_C1_end
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+   1  2  3 	a_NC3_PO4_OH1_sm
+   2  3  5 	a_PO4_OH1_C_sm
+   4  3  5 	a_AM2_OH1_C_sm
+   3  4 11 	a_OH1_AM2_C_sm
+   3  5  6 	a_OH1_C1_C1_sm
+   5  6  7 	a_C1_C1_C1_def
+   6  7  8 	a_C1_C1_C1_def
+   7  8  9      a_C1_C1_C1_def
+   8  9 10      a_C1_C1_C1_def
+   4 11 12 	a_AM2_C1_C1_sm
+  11 12 13 	a_C1_C1_C1_def
+  12 13 14 	a_C1_C1_C1_def
+  13 14 15 	a_C1_C1_C1_def
+  14 15 16 	a_C1_C1_C1_def
 
 
 ;;;;;; Martini lipid topology for C(d18:1/26:0) SM (CSM), generated using:
@@ -860,4 +980,186 @@
   12 13 14 	a_C4_C1_C1_def
 
 
+
+;;; Matti's mistakes from here on:
+;;;;;; Martini lipid topology for C(d20:1/24:1) SM (BNSM), generated using:
+
+[moleculetype]
+; molname      nrexcl
+  BNSM          1
+
+[atoms]
+; id 	type 	rester 	residu 	atom 	cgnr 	charge    (mass)
+   1  	Q1   	1   BNSM  NC3   1 	1.0
+   2    Q5   	1   BNSM  PO4   2 	-1.0
+   3    SP1   	1   BNSM  OH1   3 	0
+   4    SP2   	1   BNSM  AM2   4 	0
+   5   	SC4h 	1   BNSM  T1A   5 	0
+   6    C1   	1   BNSM  C2A   6 	0
+   7    C1   	1   BNSM  C3A   7 	0
+   8    C1   	1   BNSM  C4A   8 	0
+   9	C1	1   BNSM  C5A   9   	0
+  10    SC1   	1   BNSM  C1B  10 	0
+  11    C1   	1   BNSM  C2B  11 	0
+  12    C1   	1   BNSM  C3B  12 	0
+  13    C4h   	1   BNSM  D4B  13 	0
+  14    C1   	1   BNSM  C5B  14 	0
+  15    C1   	1   BNSM  C6B  15 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+   1  2 	b_NC3_PO4_def
+   2  3 	b_PO4_OH1_sm
+   2  4 	b_PO4_AM2_sm
+   3  4 	b_OH1_AM2_sm
+   3  5 	b_OH1_SC4_sm
+   5  6 	b_SC4_C1_mid
+   6  7 	b_C1_C1_mid
+   7  8 	b_C1_C1_mid
+   8  9 	b_C1_C1_end
+   4 10		b_AM2_SC1_sm 
+  10 11		b_SC1_C1_mid
+  11 12 	b_C1_C1_mid
+  12 13 	b_C1_C4_mid
+  13 14 	b_C4_C1_mid
+  13 14 	b_C1_C1_end
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+   1  2  3 	a_NC3_PO4_OH1_sm
+   2  3  5 	a_PO4_OH1_C_sm
+   4  3  5 	a_AM2_OH1_C_sm
+   3  4 10 	a_OH1_AM2_C_sm
+   3  5  6 	a_OH1_C1_C1_sm
+   5  6  7 	a_C1_C1_C1_def
+   6  7  8 	a_C1_C1_C1_def
+   7  8  9 	a_C1_C1_C1_def
+   4 10 11 	a_AM2_C1_C1_sm
+  10 11 12 	a_C1_C1_C1_def
+  11 12 13 	a_C1_C1_C4_def
+  12 13 14 	a_C1_C4_C1_def  
+  13 14 15 	a_C4_C1_C1_def
+
+;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;; Martini lipid topology for C(d24:1/24:1) SM (XNSM), generated using:
+
+[moleculetype]
+; molname      nrexcl
+  XNSM          1
+
+[atoms]
+; id 	type 	rester 	residu 	atom 	cgnr 	charge    (mass)
+   1  	Q1   	1   BNSM  NC3   1 	1.0
+   2    Q5   	1   BNSM  PO4   2 	-1.0
+   3    SP1   	1   BNSM  OH1   3 	0
+   4    SP2   	1   BNSM  AM2   4 	0
+   5   	SC4h 	1   BNSM  T1A   5 	0
+   6    C1   	1   BNSM  C2A   6 	0
+   7    C1   	1   BNSM  C3A   7 	0
+   8    C1   	1   BNSM  C4A   8 	0
+   9	C1	1   BNSM  C5A   9   	0
+  10	C1	1   BNSM  C6A  10	0
+  11    SC1   	1   BNSM  C1B  11 	0
+  12    C1   	1   BNSM  C2B  12 	0
+  13    C1   	1   BNSM  C3B  13 	0
+  14    C4h   	1   BNSM  D4B  14 	0
+  15    C1   	1   BNSM  C5B  15 	0
+  16    C1   	1   BNSM  C6B  16 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+   1  2 	b_NC3_PO4_def
+   2  3 	b_PO4_OH1_sm
+   2  4 	b_PO4_AM2_sm
+   3  4 	b_OH1_AM2_sm
+   3  5 	b_OH1_SC4_sm
+   5  6 	b_SC4_C1_mid
+   6  7 	b_C1_C1_mid
+   7  8 	b_C1_C1_mid
+   8  9 	b_C1_C1_mid
+   9 10		b_C1_C1_end
+   4 11		b_AM2_SC1_sm 
+  11 12		b_SC1_C1_mid
+  12 13		b_C1_C1_mid
+  13 14 	b_C1_C4_mid
+  14 15 	b_C4_C1_mid
+  15 16 	b_C1_C1_end
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+   1  2  3 	a_NC3_PO4_OH1_sm
+   2  3  5 	a_PO4_OH1_C_sm
+   4  3  5 	a_AM2_OH1_C_sm
+   3  4 10 	a_OH1_AM2_C_sm
+   3  5  6 	a_OH1_C1_C1_sm
+   5  6  7 	a_C1_C1_C1_def
+   6  7  8 	a_C1_C1_C1_def
+   7  8  9 	a_C1_C1_C1_def
+   4 10 11 	a_AM2_C1_C1_sm
+  10 11 12 	a_C1_C1_C1_def
+  11 12 13 	a_C1_C1_C4_def
+  12 13 14 	a_C1_C4_C1_def  
+  13 14 15 	a_C4_C1_C1_def
+
+
+;;;;;;;;;;;;;;;,
+
+;;;;;; Martini lipid topology for C(d18:1/22:1) SM (PGSM), generated using:
+
+[moleculetype]
+; molname      nrexcl
+  PGSM          1
+
+[atoms]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    (mass)
+   1     Q1   1  PGSM  NC3   1 	1.0
+   2     Q5   1  PGSM  PO4   2 	-1.0
+   3    SP1   1  PGSM  OH1   3 	0
+   4    SP2   1  PGSM  AM2   4 	0
+   5   SC4h   1  PGSM  T1A   5 	0
+   6     C1   1  PGSM  C2A   6 	0
+   7     C1   1  PGSM  C3A   7 	0
+   8     C1   1  PGSM  C4A   8 	0
+   9     C1   1  PGSM  C1B   9 	0
+  10     C1   1  PGSM  C2B  10 	0
+  11    C4h   1  PGSM  D3B  11 	0
+  12     C1   1  PGSM  C4B  12 	0
+  13     C1   1  PGSM  C5B  13 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+   1  2 	b_NC3_PO4_def
+   2  3 	b_PO4_OH1_sm
+   2  4 	b_PO4_AM2_sm
+   3  4 	b_OH1_AM2_sm
+   3  5 	b_OH1_SC4_sm
+   5  6 	b_SC4_C1_mid
+   6  7 	b_C1_C1_mid
+   7  8 	b_C1_C1_end
+   4  9 	b_AM2_C1_sm_5long
+   9 10 	b_C1_C1_mid_5long
+  10 11 	b_C1_C4_mid
+  11 12 	b_C4_C1_mid
+  12 13 	b_C1_C1_end
+  
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+   1  2  3 	a_NC3_PO4_OH1_sm
+   2  3  5 	a_PO4_OH1_C_sm
+   4  3  5 	a_AM2_OH1_C_sm
+   3  4  9 	a_OH1_AM2_C_sm
+   3  5  6 	a_OH1_C1_C1_sm
+   5  6  7 	a_C1_C1_C1_def
+   6  7  8 	a_C1_C1_C1_def
+   4  9 10 	a_AM2_C1_C1_sm
+   9 10 11 	a_C1_C1_C4_def
+  10 11 12 	a_C1_C4_C1_def
+  11 12 13 	a_C4_C1_C1_def
 

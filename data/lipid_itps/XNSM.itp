@@ -1,0 +1,65 @@
+[moleculetype]
+; molname      nrexcl
+  XNSM          1
+
+[atoms]
+; id 	type 	rester 	residu 	atom 	cgnr 	charge    (mass)
+   1  	Q1   	1   BNSM  NC3   1 	1.0
+   2    Q5   	1   BNSM  PO4   2 	-1.0
+   3    SP1   	1   BNSM  OH1   3 	0
+   4    SP2   	1   BNSM  AM2   4 	0
+   5   	SC4h 	1   BNSM  T1A   5 	0
+   6    C1   	1   BNSM  C2A   6 	0
+   7    C1   	1   BNSM  C3A   7 	0
+   8    C1   	1   BNSM  C4A   8 	0
+   9	C1	1   BNSM  C5A   9   	0
+  10	C1	1   BNSM  C6A  10	0
+  11    SC1   	1   BNSM  C1B  11 	0
+  12    C1   	1   BNSM  C2B  12 	0
+  13    C1   	1   BNSM  C3B  13 	0
+  14    C4h   	1   BNSM  D4B  14 	0
+  15    C1   	1   BNSM  C5B  15 	0
+  16    C1   	1   BNSM  C6B  16 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+   1  2 	1 	0.404	7000.0
+   2  3 	1 	0.380	6000.0
+   2  4 	1 	0.490	6000.0
+   3  4 	1 	0.305  20000.0
+   3  5 	1 	0.345  20000.0
+   5  6 	1      0.405    4400.0    ; symmetric to b_SC1_C4_mid
+   6  7 	1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
+   7  8 	1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
+   8  9 	1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
+   9 10		1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
+   4 11		1 	0.330	4000.0 
+  11 12		1      0.420    4400.0    ; to be used between S to R beads
+  12 13		1      0.490    2800.0    ; default R-R distance in the middle of an alkane chain
+  13 14 	1      0.475    2800.0    ; containing a double bond in one bead
+  14 15 	1      0.475    2800.0    ; symmetric, same as b_C1_C4_mid
+  15 16 	1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+   1  2  3 	1	122.0	15.0
+   2  3  5 	1	175.0	15.0
+   4  3  5 	1	 85.0	60.0
+   3  4 10 	1	150.0	45.0
+   3  5  6 	1	180.0	13.5 ; trans double bond
+   5  6  7 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+   6  7  8 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+   7  8  9 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+   4 10 11 	1	180.0	13.5
+  10 11 12 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+  11 12 13 	1      180.0	13.5   ; across a beads containing a double bond in the first/third bead
+  12 13 14 	1      140.0	10.0   ; one unsaturation  
+  13 14 15 	1      180.0	13.5   ; identical to a_C1_C1_C1 to improve transition temperatures of singly unsaturated lipids
+
+
+;;;;;;;;;;;;;;;,
+
+;;;;;; Martini lipid topology for C(d18:1/22:1) SM (PGSM), generated using:
+

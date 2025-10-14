@@ -1,0 +1,30 @@
+[moleculetype]
+MA 	1
+
+[atoms]
+; id type   resnr     residu   atom    cgnr charge
+1   SQ5n 	1 	MA 	COO 	1      -1.0
+2   C1  	1 	MA 	C1A 	2  	0
+3   C1	 	1 	MA 	C2A 	3  	0
+4   C1  	1 	MA 	C3A 	4  	0
+		
+[bonds]
+; i j funct length force.c.
+1 2 	1 	0.400	2800.0 
+2 3 	1      0.520    2800.0    ; to be used between R-R when one of the R beads is overmapping 5 carbons - consider if an alternative mapping is more appropiate!
+3 4 	1      0.500    2800.0    ; at the end of the chain, internal conformations in AA reference results in a longer bond on average
+
+[angles]
+ 1  2  3 	1	180.0	13.5
+ 2  3  4 	1      180.0	13.5   ; can be used with CBT dihedral potential, fitted from charmm36 reference
+
+;;;;; 
+;;;;; Palmitic acid
+;;;;; PA
+;;;;; 
+
+;;;;; BEAD-INDEX MAPPING
+;;;;; topology description
+;
+; COO-C1A-C2A-C3A-C4A    1-2-3-4-5
+

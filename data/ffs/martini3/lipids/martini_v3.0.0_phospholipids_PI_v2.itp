@@ -3198,3 +3198,191 @@
 3 2 1
 2 1
 
+
+;;;;;; Martini lipid topology for C16:0/22:6 PI (PDPI), generated using:
+;
+
+[moleculetype]
+; molname      nrexcl
+  PDPI          1
+
+[atoms]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    (mass)
+   1    SP1   1  PDPI   C1   1 	0
+   2   SP4r   1  PDPI   C2   2 	0
+   3   SP4r   1  PDPI   C3   3 	0
+   4    TC4   1  PDPI   C4   4 	0 	0 	; Massless virtual bead
+   5     Q5   1  PDPI  PO4   5 	-1.0
+   6   SN4a   1  PDPI  GL1   6 	0
+   7   SN4a   1  PDPI  GL2   7 	0
+   8    C4h   1  PDPI  D1A   8 	0
+   9    C5h   1  PDPI  D2A   9 	0
+  10    C5h   1  PDPI  D3A  10 	0
+  11    C4h   1  PDPI  D4A  11 	0
+  12    C4h   1  PDPI  D5A  12 	0
+  13    SC1   1  PDPI  C1B  13 	0
+  14     C1   1  PDPI  C2B  14 	0
+  15     C1   1  PDPI  C3B  15 	0
+  16     C1   1  PDPI  C4B  16 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+#ifdef FLEXIBLE
+; Using bonds not constraints
+   1  2   1 	0.3720 	30000
+   1  3   1 	0.3696 	30000
+   2  3   1 	0.4044 	30000
+#endif
+; Phosphodiester and glycerol backbone
+   1  5   1 	0.33  	 5000 	; C1 PO4
+   5  6   1 	0.368 	2250 	; PO4 GL1
+   5  7   1 	0.518 	 600 	; PO4 GL2
+; Lipid tail (uses standard Martini tail rules)
+   6  7 	b_GL_GL_glyc
+   6  8 	b_GL_C4_glyc_5long
+   8  9 	b_C4_C4_mid_5long
+   9 10 	b_C4_C4_mid
+  10 11 	b_C4_C4_mid
+  11 12 	b_C4_C4_end
+   7 13 	b_GL_SC1_glyc
+  13 14 	b_SC1_C1_mid
+  14 15 	b_C1_C1_mid
+  15 16 	b_C1_C1_end
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+; Orient the headgroup
+   2  1  5  10 	100.0 	15.0 	; C2 C1 PO4
+   1  5  6  10 	100.0 	 4.0 	; C1 PO4 GL1
+; Tail part (uses standard Martini tail rules)
+   7  6  8 	a_GL_GL_C_glyc
+   6  7 13 	a_GL_GL_C_glyc
+   6  8  9 	a_GL_C4_C4_glyc
+   8  9 10 	a_C4_C4_C4_def
+   9 10 11 	a_C4_C4_C4_def
+  10 11 12 	a_C4_C4_C4_def
+   7 13 14 	a_GL_C1_C1_glyc
+  13 14 15 	a_C1_C1_C1_def
+  14 15 16 	a_C1_C1_C1_def
+
+[dihedrals]
+;  i  j  k  l 	name 	(using named dihedraltypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k  l 	funct 	angle 	force.c.
+; Orient the headgroup
+   3  2  1  5   2 	-148 	95.0 	 	; C3 C2 C1 PO4
+   2  1  5  6   1 	180 	2.0 	2 	; C3 C2 C1 PO4
+
+[constraints]
+;  i  j  k 	funct 	length
+#ifndef FLEXIBLE
+; Using constraints not bonds
+   1  2 	1 	0.3720 	; C1 C2   Expanded 20% to account for SASA
+   1  3 	1 	0.3696 	; C1 C3
+   2  3 	1 	0.4044 	; C2 C3
+#endif
+
+[ virtual_sitesn ]
+; site funct  constructing atom indices
+   4     2     1 2 3
+
+[exclusions]
+; i  j  k  ...
+  4 3 2 1 5
+  3 2 1
+  2 1
+
+;;;;;; Martini lipid topology for C16:0/20:4 PI (PAPI), generated using:
+
+[moleculetype]
+; molname      nrexcl
+  PAPI          1
+
+[atoms]
+; id 	type 	resnr 	residu 	atom 	cgnr 	charge    (mass)
+   1    SP1   1  PAPI   C1   1 	0
+   2   SP4r   1  PAPI   C2   2 	0
+   3   SP4r   1  PAPI   C3   3 	0
+   4    TC4   1  PAPI   C4   4 	0 	0 	; Massless virtual bead
+   5     Q5   1  PAPI  PO4   5 	-1.0
+   6   SN4a   1  PAPI  GL1   6 	0
+   7   SN4a   1  PAPI  GL2   7 	0
+   8    SC1   1  PAPI  C1A   8 	0
+   9    C5h   1  PAPI  D2A   9 	0
+  10    C5h   1  PAPI  D3A  10 	0
+  11    C4h   1  PAPI  D4A  11 	0
+  12     C1   1  PAPI  C5A  12 	0
+  13    SC1   1  PAPI  C1B  13 	0
+  14     C1   1  PAPI  C2B  14 	0
+  15     C1   1  PAPI  C3B  15 	0
+  16     C1   1  PAPI  C4B  16 	0
+
+[bonds]
+;  i  j 	name 	(using named bondtypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j 	funct 	force.c.
+#ifdef FLEXIBLE
+; Using bonds not constraints
+   1  2   1 	0.3720 	30000
+   1  3   1 	0.3696 	30000
+   2  3   1 	0.4044 	30000
+#endif
+; Phosphodiester and glycerol backbone
+   1  5   1 	0.33  	 5000 	; C1 PO4
+   5  6   1 	0.368 	2250 	; PO4 GL1
+   5  7   1 	0.518 	 600 	; PO4 GL2
+; Lipid tail (uses standard Martini tail rules)
+   6  7 	b_GL_GL_glyc
+   6  8 	b_GL_SC1_glyc
+   8  9 	b_SC1_C4_mid
+   9 10 	b_C4_C4_mid
+  10 11 	b_C4_C4_mid
+  11 12 	b_C4_C1_end
+   7 13 	b_GL_SC1_glyc
+  13 14 	b_SC1_C1_mid
+  14 15 	b_C1_C1_mid
+  15 16 	b_C1_C1_end
+
+[angles]
+;  i  j  k 	name 	(using named angletypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k 	funct 	angle 	force.c.
+; Orient the headgroup
+   2  1  5  10 	100.0 	15.0 	; C2 C1 PO4
+   1  5  6  10 	100.0 	 4.0 	; C1 PO4 GL1
+; Tail part (uses standard Martini tail rules)
+   7  6  8 	a_GL_GL_C_glyc
+   6  7 13 	a_GL_GL_C_glyc
+   6  8  9 	a_GL_C1_C4_glyc
+   8  9 10 	a_C1_C4_C4_def
+   9 10 11 	a_C4_C4_C4_def
+  10 11 12 	a_C4_C4_C1_def
+   7 13 14 	a_GL_C1_C1_glyc
+  13 14 15 	a_C1_C1_C1_def
+  14 15 16 	a_C1_C1_C1_def
+
+[dihedrals]
+;  i  j  k  l 	name 	(using named dihedraltypes from martini_v3.0.0_ffbonded_v2.itp)
+;  i  j  k  l 	funct 	angle 	force.c.
+; Orient the headgroup
+   3  2  1  5   2 	-148 	95.0 	 	; C3 C2 C1 PO4
+   2  1  5  6   1 	180 	2.0 	2 	; C3 C2 C1 PO4
+
+[constraints]
+;  i  j  k 	funct 	length
+#ifndef FLEXIBLE
+; Using constraints not bonds
+   1  2 	1 	0.3720 	; C1 C2   Expanded 20% to account for SASA
+   1  3 	1 	0.3696 	; C1 C3
+   2  3 	1 	0.4044 	; C2 C3
+#endif
+
+[ virtual_sitesn ]
+; site funct  constructing atom indices
+   4     2     1 2 3
+
+[exclusions]
+; i  j  k  ...
+  4 3 2 1 5
+  3 2 1
+  2 1
+

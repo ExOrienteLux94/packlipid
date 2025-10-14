@@ -424,11 +424,17 @@ def write_topology(top_file, df, total_charge, system_name='bilayer system', lip
             f.write(';#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/general.ff"\n')
             f.write(';#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/modifications.ff"\n')
             f.write(';#include "'+packlipids_dir+'/data/ffs/martini3/martini_v3.0.0_proteins/force_fields/martini3001/aminoacids.ff"\n\n')
+            chain_ndx = 97
             for prot in protein_itp:
+
                 f.write('#include "' + prot +'"\n')
                 if posre and protein_bool:
                     f.write('#ifdef POSRSTR\n')
-                    f.write('#include "'+posre_f+'"\n')
+                    if len(protein_itp) > 1:
+                        f.write('#include "'+posre_f[:-4]+'_'+chr(chain_ndx)+'.itp"\n')
+                        chain_ndx += 1
+                    else:
+                        f.write('#include "'+posre_f+'"\n')
                     f.write('#endif\n\n')
             f.write('\n')
         else:
@@ -693,14 +699,18 @@ def main():
         # Load areas CSV
         areas_csv = packlipids_dir + '/data/areas.csv'
         areas = pd.read_csv(areas_csv, delimiter=delim)
-
+        areas.columns = ['lipid', 'area', 'charge']
+        composition.sort_values('lipid')
+        areas.sort_values('lipid')
         #os.chdir(os.path.join(cwd, dirname))
         #cwd = os.getcwd()
-
+        print("Generating bilayer with initial composition:")
+        print(composition)
+        print("***************")
         # Merge on lipid name
         merged = pd.merge(composition, areas, how="left", on="lipid")
         merged["area"]   = merged["area"].fillna(60) # fill out missing areas
-
+        #print(merged)
         #check for NaN values in charge
         nan_ndx = merged[merged["charge"].isna()].index
 
@@ -708,7 +718,8 @@ def main():
             nan_lipids = merged.loc[merged["charge"].isna(), "lipid"].tolist()
             # query lipid net harge from itp file
             charges_from_itp = []
-            for ln in nan_lipids:
+            #for ln in nan_lipids:
+            for ln in merged["lipid"]:
                 itp_dir = packlipids_dir + '/data/ffs/martini3/lipids/top/'
                 ln_itp=itp_dir + ln +'.itp'
                 if os.path.isfile(ln_itp):
@@ -716,7 +727,8 @@ def main():
                 else:
                     # append with default values
                     charges_from_itp.append(0)
-            merged.loc[merged["charge"].isna(), "charge"] = charges_from_itp
+            #merged.loc[merged["charge"].isna(), "charge"] = charges_from_itp
+            merged["charge"] = charges_from_itp
 
         # Calculate total leaflet areas
         merged['upper_area'] = merged['upper'] * merged['area']
@@ -740,44 +752,24 @@ def main():
         print(f"Box XY dimensions: {xy_length:.2f} x {xy_length:.2f} Å")
         print(f"Total bilayer charge: {total_charge:.2f} e")
 
-
+        print(merged)
         itp_list = []
         if ffield == 'martini3':
             itp_dir = packlipids_dir + '/data/ffs/martini3/lipids/'
-            # figure out which lipid its are needed
+            # figure out which lipid itps are needed
             for lipid in merged['lipid']:
-                suffix = lipid[-2:]
-                if suffix == 'PA':
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PA_v2.itp')
-                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PA_v2.itp')
-                elif suffix == 'PC':
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PC_v2.itp')
-                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PC_v2.itp')
-                elif suffix == 'PE': 
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PE_v2.itp')
-                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PE_v2.itp')
-                elif suffix == 'PG': 
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PG_v2.itp')
-                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PG_v2.itp')
-                elif suffix == 'PS': 
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PS_v2.itp')
-                    itp_list.append(itp_dir+'martini_v3.0.0_etherphospholipids_PS_v2.itp')
-                elif suffix == 'PI': 
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_PI_v2.itp')
-                elif suffix == 'CL': 
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_CL_v2.itp')
-                elif suffix == 'SM': 
-                    itp_list.append(itp_dir+'martini_v3.0.0_phospholipids_SM_v2.itp')
-                else:
-                    lipid_itps = glob.glob(os.path.join(itp_dir, "*.itp"))
-                    for fn in lipid_itps:
+                #hits = 0
+                lipid_itps = glob.glob(os.path.join(itp_dir, "*.itp"))
+                for fn in lipid_itps:
             
-                        if lipid in get_molnames(fn):
-                            itp_list.append(fn)
-                            break
-            
+                    if lipid in get_molnames(fn):
+                        itp_list.append(fn)
+                        #hits += 1
+                        break
+                #if hits > 1:
+                 #   print(f"Found more than 1 match for molecule {lipid}")
         #print(lipid_itps)
-
+            itp_list = list(dict.fromkeys(itp_list))
     except IOError:
         print("One or more of the provided files does not exists or unable to read file contents!")
         quit
@@ -807,6 +799,7 @@ def main():
         z = d_water*2 + d_bilayer
 
         if protein == True:
+            scaled = False
             prot_coords, prot_ndxs = find_extreme_coords(protein_pdb)
             diff_xy = np.abs(prot_coords[0:-1,1] - prot_coords[0:-1,0])
             r_cylider = np.max(diff_xy) * 0.525
@@ -820,7 +813,9 @@ def main():
                 print("Rescaling box size to fit protein in membrane.")
                 xy_length_old = xy_length 
                 xy_length = np.max(diff_xy) + 80
-
+                scaled = True
+            else:
+                xy_length_old = xy_length
             # center protein in box 
             if center:
                 centered_out_pdb = output_dir + '/protein_center.pdb'
@@ -838,7 +833,7 @@ def main():
 
             elif protein_insert_method == 'replace' and n_protein == 1:
                 # make sure protein fits in box, if not, resize membrane
-                if rescale_box == True:
+                if scaled == True:
                     area_lipid_new = xy_length ** 2 - prot_area
                     l_scale = (area_lipid_new ** 0.5) / xy_length_old
                     a_scale = int(np.round(l_scale**2, decimals=0))
@@ -871,8 +866,9 @@ def main():
             protein_charges = 0
             for itp in prot_itp_paths:
                 protein_charges += net_charge_from_itp(itp)
+            print(f"Protein net charge is {protein_charges}")
             total_charge += protein_charges * n_protein
-
+            
 
             if n_protein == 1:
                 prot_coms = np.array([[xy_length/2, xy_length/2]])
@@ -944,6 +940,7 @@ def main():
                     f.write("end structure\n\n")       
 
             # build lipid bilayer
+            print(merged)
             for idx, row in merged.iterrows():
                 lipid = row['lipid']
                 upper = int(row['upper'])
